@@ -9,7 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -106,7 +106,7 @@ public class Movie implements Serializable {
 	/**
 	 * The movie cast. Not present in reduced form.
 	 */
-	private Set<CastInfo> cast = new HashSet<CastInfo>();
+	private Set<CastInfo> cast = new LinkedHashSet<CastInfo>();
 
 	/**
 	 * Construct a movie object from a JSON object. The supplied boolean denotes

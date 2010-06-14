@@ -9,7 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -70,7 +70,7 @@ public class Person implements Serializable {
 	/**
 	 * The filmography of the person. Not present in reduced form.
 	 */
-	private Set<FilmographyInfo> filmography = new HashSet<FilmographyInfo>();
+	private Set<FilmographyInfo> filmography = new LinkedHashSet<FilmographyInfo>();
 	/**
 	 * The birthday of the person. Not present in reduced form.
 	 */
@@ -78,7 +78,7 @@ public class Person implements Serializable {
 	/**
 	 * The aliases of the person. Not present in reduced form.
 	 */
-	private Set<String> aka = new HashSet<String>();
+	private Set<String> aka = new LinkedHashSet<String>();
 
 	/**
 	 * Construct a person object from a JSON object. The supplied boolean

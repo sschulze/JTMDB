@@ -1,7 +1,7 @@
 package net.sf.jtmdb;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -13,7 +13,7 @@ public class MovieImages implements Serializable {
 
 	private static final long serialVersionUID = -4389135150276440098L;
 
-	public Set<MoviePoster> posters = new HashSet<MoviePoster>();
-	public Set<MovieBackdrop> backdrops = new HashSet<MovieBackdrop>();
+	public Set<MoviePoster> posters = new LinkedHashSet<MoviePoster>();
+	public Set<MovieBackdrop> backdrops = new LinkedHashSet<MovieBackdrop>();
 
 }
