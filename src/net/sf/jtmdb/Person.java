@@ -434,6 +434,51 @@ public class Person implements Serializable {
 	}
 
 	/**
+	 * Searches for people and returns full flavors. The string supplied can
+	 * contain spaces. Returns a list of Person objects with the full form (see
+	 * class description {@link Person} and method {@link #isReduced()}). Will
+	 * return null if a valid API key was not supplied to the
+	 * {@link GeneralSettings}
+	 * 
+	 * @param name
+	 *            The name of the person to search for.
+	 * @return A list of Person objects with the full form (see class
+	 *         description {@link Person} and method {@link #isReduced()}).Will
+	 *         return null if a valid API key was not supplied to the
+	 *         {@link GeneralSettings}
+	 * @throws JSONException
+	 * @throws IOException
+	 */
+	public static List<Person> deepSearch(String name) throws Exception {
+		name = name.replaceAll(" ", "%20");
+		if (GeneralSettings.getApiKey() != null
+				&& !GeneralSettings.getApiKey().equals("") && name != null
+				&& !name.equals("")) {
+			URL call = new URL(
+					"http://api.themoviedb.org/2.1/Person.search/en/json/"
+							+ GeneralSettings.getApiKey() + "/" + name);
+			URLConnection yc = call.openConnection();
+			BufferedReader in = new BufferedReader(new InputStreamReader(yc
+					.getInputStream()));
+			String inputLine;
+			StringBuffer jsonString = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				jsonString.append(inputLine);
+			}
+			in.close();
+			List<Person> results = new LinkedList<Person>();
+			if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				JSONArray jsonArray = new JSONArray(jsonString.toString());
+				for (int i = 0; i < jsonArray.length(); i++) {
+					results.add(getInfo(jsonArray.getJSONObject(i).getInt("id")));
+				}
+			}
+			return results;
+		}
+		return null;
+	}
+
+	/**
 	 * Searches for people. The string supplied can contain spaces. Returns a
 	 * list of Person objects with the reduced form (see class description
 	 * {@link Person} and method {@link #isReduced()}). Will return null if a

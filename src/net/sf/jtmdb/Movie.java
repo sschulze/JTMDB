@@ -502,6 +502,53 @@ public class Movie implements Serializable {
 	}
 
 	/**
+	 * Searches for movies and returns full flavors. The string supplied can
+	 * contain spaces. Returns a list of Movie objects with the full form (see
+	 * class description {@link Movie} and method {@link #isReduced()}). Will
+	 * return null if a valid API key was not supplied to the
+	 * {@link GeneralSettings}
+	 * 
+	 * @param name
+	 *            The name of the movie to search for.
+	 * @return A list of Movie objects with the full form (see class description
+	 *         {@link Movie} and method {@link #isReduced()}).Will return null
+	 *         if a valid API key was not supplied to the
+	 *         {@link GeneralSettings}
+	 * @throws JSONException
+	 * @throws IOException
+	 */
+
+	public static List<Movie> deepSearch(String name) throws JSONException,
+			IOException {
+		name = name.replaceAll(" ", "%20");
+		if (GeneralSettings.getApiKey() != null
+				&& !GeneralSettings.getApiKey().equals("") && name != null
+				&& !name.equals("")) {
+			URL call = new URL(
+					"http://api.themoviedb.org/2.1/Movie.search/en/json/"
+							+ GeneralSettings.getApiKey() + "/" + name);
+			URLConnection yc = call.openConnection();
+			BufferedReader in = new BufferedReader(new InputStreamReader(yc
+					.getInputStream()));
+			String inputLine;
+			StringBuffer jsonString = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				jsonString.append(inputLine);
+			}
+			in.close();
+			List<Movie> results = new LinkedList<Movie>();
+			if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				JSONArray jsonArray = new JSONArray(jsonString.toString());
+				for (int i = 0; i < jsonArray.length(); i++) {
+					results.add(getInfo(jsonArray.getJSONObject(i).getInt("id")));
+				}
+			}
+			return results;
+		}
+		return null;
+	}
+
+	/**
 	 * Searches for movies. The string supplied can contain spaces. Returns a
 	 * list of Movie objects with the reduced form (see class description
 	 * {@link Movie} and method {@link #isReduced()}). Will return null if a
