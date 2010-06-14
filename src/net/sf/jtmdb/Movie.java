@@ -13,6 +13,8 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -502,6 +504,94 @@ public class Movie implements Serializable {
 	}
 
 	/**
+	 * Returns a list of movies in the box office (full flavors). Returns a list
+	 * of Movie objects with the full form (see class description {@link Movie}
+	 * and method {@link #isReduced()}). Will return null if a valid API key was
+	 * not supplied to the {@link GeneralSettings}<br/>
+	 * <br/>
+	 * <strong>This method relies on parsing the home page HTML of themoviedb.org. So it
+	 * is not 100% stable as the syntax of the web page may change.</strong>
+	 * 
+	 * @return A list of Movie objects in the box office with the full form (see
+	 *         class description {@link Movie} and method {@link #isReduced()}
+	 *         ).Will return null if a valid API key was not supplied to the
+	 *         {@link GeneralSettings}
+	 * @throws JSONException
+	 * @throws IOException
+	 */
+	public static List<Movie> boxOffice() throws IOException, JSONException {
+		return parseHTML(0);
+	}
+
+	/**
+	 * Returns a list of the most popular movies (full flavors). Returns a list
+	 * of Movie objects with the full form (see class description {@link Movie}
+	 * and method {@link #isReduced()}). Will return null if a valid API key was
+	 * not supplied to the {@link GeneralSettings}<br/>
+	 * <br/>
+	 * <strong>This method relies on parsing the home page HTML of themoviedb.org. So it
+	 * is not 100% stable as the syntax of the web page may change.</strong>
+	 * 
+	 * @return A list of the most popular Movie objects with the full form (see
+	 *         class description {@link Movie} and method {@link #isReduced()}
+	 *         ).Will return null if a valid API key was not supplied to the
+	 *         {@link GeneralSettings}
+	 * @throws JSONException
+	 * @throws IOException
+	 */
+	public static List<Movie> mostPopular() throws IOException, JSONException {
+		return parseHTML(1);
+	}
+
+	/**
+	 * This method gets the HTML of the home page of themoviedatabase.org and
+	 * parses it for a list of movies in the box office or in the most popular
+	 * list.
+	 * 
+	 * @param part
+	 *            The part of the HTML to parse. 0 is for the box office and 1
+	 *            is for the most popular.
+	 * @return A list of movies.
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	private static List<Movie> parseHTML(int part) throws IOException,
+			JSONException {
+		URL call = new URL("http://www.themoviedb.org/");
+		URLConnection yc = call.openConnection();
+		BufferedReader in = new BufferedReader(new InputStreamReader(yc
+				.getInputStream()));
+		String inputLine;
+		StringBuffer xmlString = new StringBuffer();
+		while ((inputLine = in.readLine()) != null) {
+			xmlString.append(inputLine);
+		}
+		in.close();
+
+		String[] parts = xmlString.toString().split("first most-popular");
+
+		Pattern p = Pattern.compile("/movie/(\\d+)");
+		Matcher match = p.matcher(parts[part]);
+		Set<Integer> ids = new LinkedHashSet<Integer>();
+		while (match.find()) {
+			try {
+				int id = Integer.parseInt(match.group(1));
+				ids.add(id);
+			} catch (NumberFormatException e) {
+
+			}
+		}
+		List<Movie> movies = null;
+		if (!ids.isEmpty()) {
+			movies = new LinkedList<Movie>();
+			for (int id : ids.toArray(new Integer[0])) {
+				movies.add(getInfo(id));
+			}
+		}
+		return movies;
+	}
+
+	/**
 	 * Searches for movies and returns full flavors. The string supplied can
 	 * contain spaces. Returns a list of Movie objects with the full form (see
 	 * class description {@link Movie} and method {@link #isReduced()}). Will
@@ -517,7 +607,6 @@ public class Movie implements Serializable {
 	 * @throws JSONException
 	 * @throws IOException
 	 */
-
 	public static List<Movie> deepSearch(String name) throws JSONException,
 			IOException {
 		name = name.replaceAll(" ", "%20");
@@ -540,7 +629,9 @@ public class Movie implements Serializable {
 			if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 				JSONArray jsonArray = new JSONArray(jsonString.toString());
 				for (int i = 0; i < jsonArray.length(); i++) {
-					results.add(getInfo(jsonArray.getJSONObject(i).getInt("id")));
+					results
+							.add(getInfo(jsonArray.getJSONObject(i)
+									.getInt("id")));
 				}
 			}
 			return results;
@@ -850,7 +941,11 @@ public class Movie implements Serializable {
 				} catch (MalformedURLException e) {
 					setTrailer(null);
 				}
-				setRuntime(jsonObject.getInt("runtime"));
+				try {
+					setRuntime(jsonObject.getInt("runtime"));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 				try {
 					setHomepage(new URL(jsonObject.getString("homepage")));
 				} catch (MalformedURLException e) {
@@ -878,8 +973,16 @@ public class Movie implements Serializable {
 							castCharacter, castJob, castID, castThumb, castDept);
 					getCast().add(castInfo);
 				}
-				setBudget(jsonObject.getInt("budget"));
-				setRevenue(jsonObject.getInt("revenue"));
+				try {
+					setBudget(jsonObject.getInt("budget"));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				try {
+					setRevenue(jsonObject.getInt("revenue"));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 			return true;
 		} catch (JSONException e) {
