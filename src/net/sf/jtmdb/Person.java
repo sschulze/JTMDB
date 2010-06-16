@@ -51,6 +51,10 @@ public class Person implements Serializable {
 	 * The biography of the person.
 	 */
 	private String biography;
+	/**
+	 * The popularity of the Person;
+	 */
+	private int popularity;
 
 	/**
 	 * Denotes whether the person object is reduced.
@@ -241,6 +245,25 @@ public class Person implements Serializable {
 	}
 
 	/**
+	 * Sets the popularity of the person.
+	 * 
+	 * @param popularity
+	 *            The popularity of the person.
+	 */
+	public void setPopularity(int popularity) {
+		this.popularity = popularity;
+	}
+
+	/**
+	 * The popularity of the person.
+	 * 
+	 * @return The popularity of the person.
+	 */
+	public int getPopularity() {
+		return popularity;
+	}
+
+	/**
 	 * Sets the ID of the person.
 	 * 
 	 * @param iD
@@ -354,6 +377,7 @@ public class Person implements Serializable {
 	 */
 	public boolean parseJSON(JSONObject jsonObject) {
 		try {
+			setPopularity(jsonObject.getInt("popularity"));
 			setName(jsonObject.getString("name"));
 			try {
 				setUrl(new URL(jsonObject.getString("url")));
@@ -470,7 +494,9 @@ public class Person implements Serializable {
 			if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 				JSONArray jsonArray = new JSONArray(jsonString.toString());
 				for (int i = 0; i < jsonArray.length(); i++) {
-					results.add(getInfo(jsonArray.getJSONObject(i).getInt("id")));
+					results
+							.add(getInfo(jsonArray.getJSONObject(i)
+									.getInt("id")));
 				}
 			}
 			return results;

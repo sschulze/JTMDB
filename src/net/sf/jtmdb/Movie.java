@@ -109,6 +109,10 @@ public class Movie implements Serializable {
 	 * The movie cast. Not present in reduced form.
 	 */
 	private Set<CastInfo> cast = new LinkedHashSet<CastInfo>();
+	/**
+	 * The movie Genres. Not present in reduced form.
+	 */
+	private Set<Genre> genres = new LinkedHashSet<Genre>();
 
 	/**
 	 * Construct a movie object from a JSON object. The supplied boolean denotes
@@ -202,6 +206,17 @@ public class Movie implements Serializable {
 	 */
 	public String getCertification() {
 		return certification;
+	}
+
+	/**
+	 * The Movie Genres. Not present in reduced form (see class description
+	 * {@link Movie} and method {@link #isReduced()}).
+	 * 
+	 * @return The Movie Genres. Not present in reduced form (see class
+	 *         description {@link Movie} and method {@link #isReduced()}).
+	 */
+	public Set<Genre> getGenres() {
+		return genres;
 	}
 
 	/**
@@ -490,7 +505,39 @@ public class Movie implements Serializable {
 	 *            The cast of the Movie.
 	 */
 	public void setCast(Set<CastInfo> cast) {
-		this.cast = cast;
+		this.cast.clear();
+		this.cast.addAll(cast);
+	}
+
+	/**
+	 * Adds the cast to the Movie.
+	 * 
+	 * @param cast
+	 *            The cast of the Movie to add.
+	 */
+	public void addCast(Set<CastInfo> cast) {
+		this.cast.addAll(cast);
+	}
+
+	/**
+	 * Set the genres of the Movie.
+	 * 
+	 * @param genres
+	 *            The genres of the Movie.
+	 */
+	public void setGenres(Set<Genre> genres) {
+		this.genres.clear();
+		this.genres.addAll(genres);
+	}
+
+	/**
+	 * Adds the genres to the Movie.
+	 * 
+	 * @param genres
+	 *            The genres of the Movie to add.
+	 */
+	public void addGenres(Set<Genre> genres) {
+		this.genres.addAll(genres);
 	}
 
 	/**
@@ -509,8 +556,9 @@ public class Movie implements Serializable {
 	 * and method {@link #isReduced()}). Will return null if a valid API key was
 	 * not supplied to the {@link GeneralSettings}<br/>
 	 * <br/>
-	 * <strong>This method relies on parsing the home page HTML of themoviedb.org. So it
-	 * is not 100% stable as the syntax of the web page may change.</strong>
+	 * <strong>This method relies on parsing the home page HTML of
+	 * themoviedb.org. So it is not 100% stable as the syntax of the web page
+	 * may change.</strong>
 	 * 
 	 * @return A list of Movie objects in the box office with the full form (see
 	 *         class description {@link Movie} and method {@link #isReduced()}
@@ -529,8 +577,9 @@ public class Movie implements Serializable {
 	 * and method {@link #isReduced()}). Will return null if a valid API key was
 	 * not supplied to the {@link GeneralSettings}<br/>
 	 * <br/>
-	 * <strong>This method relies on parsing the home page HTML of themoviedb.org. So it
-	 * is not 100% stable as the syntax of the web page may change.</strong>
+	 * <strong>This method relies on parsing the home page HTML of
+	 * themoviedb.org. So it is not 100% stable as the syntax of the web page
+	 * may change.</strong>
 	 * 
 	 * @return A list of the most popular Movie objects with the full form (see
 	 *         class description {@link Movie} and method {@link #isReduced()}
@@ -934,6 +983,17 @@ public class Movie implements Serializable {
 			}
 
 			if (!isReduced()) {
+				JSONArray genresArray = jsonObject.getJSONArray("genres");
+				for (int i = 0; i < genresArray.length(); i++) {
+					JSONObject genreObject = genresArray.getJSONObject(i);
+					String genreName = genreObject.getString("name");
+					URL genreUrl = null;
+					try {
+						genreUrl = new URL(genreObject.getString("url"));
+					} catch (MalformedURLException e) {
+					}
+					getGenres().add(new Genre(genreUrl, genreName));
+				}
 				setTagline(jsonObject.getString("tagline"));
 				setCertification(jsonObject.getString("certification"));
 				try {
