@@ -29,8 +29,8 @@ import org.json.JSONObject;
  */
 public class Person implements Serializable {
 
-	private static final long serialVersionUID = 4531190244368828528L;
-
+	private static final long serialVersionUID = -6310264485167208111L;
+	
 	/**
 	 * The name of the person.
 	 */

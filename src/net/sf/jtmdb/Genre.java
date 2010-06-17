@@ -1,5 +1,6 @@
 package net.sf.jtmdb;
 
+import java.io.Serializable;
 import java.net.URL;
 
 /**
@@ -7,8 +8,10 @@ import java.net.URL;
  * 
  * @author Savvas Dalkitsis
  */
-public class Genre {
+public class Genre implements Serializable {
 
+	private static final long serialVersionUID = 5612311477079904963L;
+	
 	/**
 	 * The url of the Genre.
 	 */

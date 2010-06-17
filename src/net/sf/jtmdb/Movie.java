@@ -31,8 +31,9 @@ import org.json.JSONObject;
  */
 public class Movie implements Serializable {
 
-	private static final long serialVersionUID = -3069947568976013332L;
 
+	private static final long serialVersionUID = 6802995614207632594L;
+	
 	/**
 	 * The name of the movie.
 	 */
