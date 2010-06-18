@@ -31,9 +31,8 @@ import org.json.JSONObject;
  */
 public class Movie implements Serializable {
 
-
 	private static final long serialVersionUID = 6802995614207632594L;
-	
+
 	/**
 	 * The name of the movie.
 	 */
@@ -569,6 +568,33 @@ public class Movie implements Serializable {
 	 * @throws IOException
 	 */
 	public static List<Movie> boxOffice() throws IOException, JSONException {
+		Set<Integer> ids = parseHTML(0);
+
+		List<Movie> movies = null;
+		if (!ids.isEmpty()) {
+			movies = new LinkedList<Movie>();
+			for (int id : ids.toArray(new Integer[0])) {
+				movies.add(getInfo(id));
+			}
+		}
+		return movies;
+	}
+
+	/**
+	 * Returns a set of the IDs of the movies in the box office. Will return
+	 * null if a valid API key was not supplied to the {@link GeneralSettings}<br/>
+	 * <br/>
+	 * <strong>This method relies on parsing the home page HTML of
+	 * themoviedb.org. So it is not 100% stable as the syntax of the web page
+	 * may change.</strong>
+	 * 
+	 * @return A set of the IDs of the movies in the box office. Will return
+	 *         null if a valid API key was not supplied to the
+	 *         {@link GeneralSettings}
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static Set<Integer> boxOfficeIDs() throws IOException, JSONException {
 		return parseHTML(0);
 	}
 
@@ -590,6 +616,33 @@ public class Movie implements Serializable {
 	 * @throws IOException
 	 */
 	public static List<Movie> mostPopular() throws IOException, JSONException {
+		Set<Integer> ids = parseHTML(1);
+
+		List<Movie> movies = null;
+		if (!ids.isEmpty()) {
+			movies = new LinkedList<Movie>();
+			for (int id : ids.toArray(new Integer[0])) {
+				movies.add(getInfo(id));
+			}
+		}
+		return movies;
+	}
+
+	/**
+	 * Returns a set of the IDs of the most popular movies. Will return null if
+	 * a valid API key was not supplied to the {@link GeneralSettings}<br/>
+	 * <br/>
+	 * <strong>This method relies on parsing the home page HTML of
+	 * themoviedb.org. So it is not 100% stable as the syntax of the web page
+	 * may change.</strong>
+	 * 
+	 * @return A set of the IDs of the most popular movies. Will return null if
+	 *         a valid API key was not supplied to the {@link GeneralSettings}
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static Set<Integer> mostPopularIDs() throws IOException,
+			JSONException {
 		return parseHTML(1);
 	}
 
@@ -605,7 +658,7 @@ public class Movie implements Serializable {
 	 * @throws IOException
 	 * @throws JSONException
 	 */
-	private static List<Movie> parseHTML(int part) throws IOException,
+	private static Set<Integer> parseHTML(int part) throws IOException,
 			JSONException {
 		URL call = new URL("http://www.themoviedb.org/");
 		URLConnection yc = call.openConnection();
@@ -631,14 +684,7 @@ public class Movie implements Serializable {
 
 			}
 		}
-		List<Movie> movies = null;
-		if (!ids.isEmpty()) {
-			movies = new LinkedList<Movie>();
-			for (int id : ids.toArray(new Integer[0])) {
-				movies.add(getInfo(id));
-			}
-		}
-		return movies;
+		return ids;
 	}
 
 	/**
