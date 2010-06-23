@@ -10,7 +10,7 @@ import java.net.URL;
  */
 public class FilmographyInfo implements Serializable {
 
-	private static final long serialVersionUID = -3102651803562046785L;
+	private static final long serialVersionUID = -5177289761054959833L;
 
 	/**
 	 * The name of the Movie.
@@ -32,6 +32,10 @@ public class FilmographyInfo implements Serializable {
 	 * The job description in the Movie.
 	 */
 	private String job;
+	/**
+	 * The department of the job for the Movie.
+	 */
+	private String department;
 
 	/**
 	 * Creates a new FilmographyInfo object.
@@ -46,14 +50,17 @@ public class FilmographyInfo implements Serializable {
 	 *            The ID of the Movie.
 	 * @param job
 	 *            The job description in the Movie.
+	 * @param department
+	 *            The department of the job for the Movie.
 	 */
 	public FilmographyInfo(String name, String characterName, URL url, int ID,
-			String job) {
+			String job, String department) {
 		setName(name);
 		setCharacterName(characterName);
 		setUrl(url);
 		setID(ID);
 		setJob(job);
+		setDepartment(department);
 	}
 
 	@Override
@@ -167,6 +174,23 @@ public class FilmographyInfo implements Serializable {
 	 */
 	public void setJob(String job) {
 		this.job = job;
+	}
+
+	/**
+	 * Sets the department of the job for the Movie.
+	 * 
+	 * @param department
+	 *            The department of the job for the Movie.
+	 */
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
+	/**
+	 * The department of the job for the Movie. for the Movieof the cast.
+	 */
+	public String getDepartment() {
+		return department;
 	}
 
 }

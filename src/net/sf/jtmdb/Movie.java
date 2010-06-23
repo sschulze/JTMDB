@@ -31,7 +31,7 @@ import org.json.JSONObject;
  */
 public class Movie implements Serializable {
 
-	private static final long serialVersionUID = 6802995614207632594L;
+	private static final long serialVersionUID = 7435655822360707549L;
 
 	/**
 	 * The name of the movie.
@@ -69,6 +69,18 @@ public class Movie implements Serializable {
 	 * The images of the movie.
 	 */
 	private MovieImages images = new MovieImages();
+	/**
+	 * Is the movie translated.
+	 */
+	private boolean translated;
+	/**
+	 * The language of the Movie.
+	 */
+	private String language;
+	/**
+	 * The type of the Movie.
+	 */
+	private String movieType;
 
 	/**
 	 * Denotes whether the movie object is reduced.
@@ -113,6 +125,14 @@ public class Movie implements Serializable {
 	 * The movie Genres. Not present in reduced form.
 	 */
 	private Set<Genre> genres = new LinkedHashSet<Genre>();
+	/**
+	 * The movie Studios. Not present in reduced form.
+	 */
+	private Set<Studio> studios = new LinkedHashSet<Studio>();
+	/**
+	 * The movie Countries. Not present in reduced form.
+	 */
+	private Set<Country> countries = new LinkedHashSet<Country>();
 
 	/**
 	 * Construct a movie object from a JSON object. The supplied boolean denotes
@@ -145,6 +165,63 @@ public class Movie implements Serializable {
 	public Movie(JSONArray jsonObjectInArray, boolean isReduced) {
 		setReduced(isReduced);
 		parseJSON(jsonObjectInArray);
+	}
+
+	/**
+	 * Returns the language of the Movie.
+	 * 
+	 * @return The language of the Movie.
+	 */
+	public String getLanguage() {
+		return language;
+	}
+
+	/**
+	 * Sets the language of the Movie.
+	 * 
+	 * @param language
+	 *            The language of the Movie.
+	 */
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	/**
+	 * Returns the type of the Movie.
+	 * 
+	 * @return The type of the Movie.
+	 */
+	public String getMovieType() {
+		return movieType;
+	}
+
+	/**
+	 * Sets the type of the Movie.
+	 * 
+	 * @param movieType
+	 *            The type of the Movie.
+	 */
+	public void setMovieType(String movieType) {
+		this.movieType = movieType;
+	}
+
+	/**
+	 * Returns true if the Movie is translated.
+	 * 
+	 * @return True if the Movie is translated.
+	 */
+	public boolean isTranslated() {
+		return translated;
+	}
+
+	/**
+	 * Sets whether the Movie is translated.
+	 * 
+	 * @param translated
+	 *            The translated flag of the Movie.
+	 */
+	public void setTranslated(boolean translated) {
+		this.translated = translated;
 	}
 
 	/**
@@ -217,6 +294,28 @@ public class Movie implements Serializable {
 	 */
 	public Set<Genre> getGenres() {
 		return genres;
+	}
+
+	/**
+	 * The Movie Studio. Not present in reduced form (see class description
+	 * {@link Movie} and method {@link #isReduced()}).
+	 * 
+	 * @return The Movie Studio. Not present in reduced form (see class
+	 *         description {@link Movie} and method {@link #isReduced()}).
+	 */
+	public Set<Studio> getStudios() {
+		return studios;
+	}
+
+	/**
+	 * The Movie Countries. Not present in reduced form (see class description
+	 * {@link Movie} and method {@link #isReduced()}).
+	 * 
+	 * @return The Movie Countries. Not present in reduced form (see class
+	 *         description {@link Movie} and method {@link #isReduced()}).
+	 */
+	public Set<Country> getCountries() {
+		return countries;
 	}
 
 	/**
@@ -528,6 +627,48 @@ public class Movie implements Serializable {
 	public void setGenres(Set<Genre> genres) {
 		this.genres.clear();
 		this.genres.addAll(genres);
+	}
+
+	/**
+	 * Adds the studios to the Movie.
+	 * 
+	 * @param studios
+	 *            The studios of the Movie to add.
+	 */
+	public void addStudios(Set<Studio> studios) {
+		this.studios.addAll(studios);
+	}
+
+	/**
+	 * Set the studios of the Movie.
+	 * 
+	 * @param studios
+	 *            The studios of the Movie.
+	 */
+	public void setStudios(Set<Studio> studios) {
+		this.studios.clear();
+		this.studios.addAll(studios);
+	}
+
+	/**
+	 * Adds the countries to the Movie.
+	 * 
+	 * @param countries
+	 *            The countries of the Movie to add.
+	 */
+	public void addCountries(Set<Country> countries) {
+		this.countries.addAll(countries);
+	}
+
+	/**
+	 * Set the countries of the Movie.
+	 * 
+	 * @param countries
+	 *            The countries of the Movie.
+	 */
+	public void setCountries(Set<Country> countries) {
+		this.countries.clear();
+		this.countries.addAll(countries);
 	}
 
 	/**
@@ -942,6 +1083,9 @@ public class Movie implements Serializable {
 	 */
 	public boolean parseJSON(JSONObject jsonObject) {
 		try {
+			setLanguage(jsonObject.getString("language"));
+			setMovieType(jsonObject.getString("movie_type"));
+			setTranslated(jsonObject.getBoolean("translated"));
 			setRating(jsonObject.getDouble("rating"));
 			setAlternativeName(jsonObject.getString("alternative_name"));
 			setName(jsonObject.getString("name"));
@@ -1040,6 +1184,30 @@ public class Movie implements Serializable {
 					} catch (MalformedURLException e) {
 					}
 					getGenres().add(new Genre(genreUrl, genreName));
+				}
+				JSONArray studiosArray = jsonObject.getJSONArray("studios");
+				for (int i = 0; i < studiosArray.length(); i++) {
+					JSONObject studioObject = studiosArray.getJSONObject(i);
+					String studioName = studioObject.getString("name");
+					URL studioUrl = null;
+					try {
+						studioUrl = new URL(studioObject.getString("url"));
+					} catch (MalformedURLException e) {
+					}
+					getStudios().add(new Studio(studioUrl, studioName));
+				}
+				JSONArray countriesArray = jsonObject.getJSONArray("countries");
+				for (int i = 0; i < countriesArray.length(); i++) {
+					JSONObject countryObject = countriesArray.getJSONObject(i);
+					String countryName = countryObject.getString("name");
+					String countryCode = countryObject.getString("code");
+					URL countryUrl = null;
+					try {
+						countryUrl = new URL(countryObject.getString("url"));
+					} catch (MalformedURLException e) {
+					}
+					getCountries().add(
+							new Country(countryUrl, countryName, countryCode));
 				}
 				setTagline(jsonObject.getString("tagline"));
 				setCertification(jsonObject.getString("certification"));

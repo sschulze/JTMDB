@@ -30,7 +30,7 @@ import org.json.JSONObject;
 public class Person implements Serializable {
 
 	private static final long serialVersionUID = -6310264485167208111L;
-	
+
 	/**
 	 * The name of the person.
 	 */
@@ -446,9 +446,10 @@ public class Person implements Serializable {
 					}
 					int filmID = film.getInt("id");
 					String filmJob = film.getString("job");
+					String filmDepartment = film.getString("department");
 					getFilmography().add(
 							new FilmographyInfo(filmName, filmCharacter,
-									filmUrl, filmID, filmJob));
+									filmUrl, filmID, filmJob, filmDepartment));
 				}
 			}
 		} catch (JSONException e) {
