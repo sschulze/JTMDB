@@ -3,6 +3,8 @@ package net.sf.jtmdb;
 import java.io.Serializable;
 import java.net.URL;
 
+import net.sf.jtmdb.Log.Verbosity;
+
 /**
  * This class represents an entry in the cast list of a Movie. It contains info
  * about a member of cast and its ID is the same ID with that of the Person in
@@ -13,7 +15,7 @@ import java.net.URL;
 public class CastInfo implements Serializable {
 
 	private static final long serialVersionUID = 8623103045084363150L;
-	
+
 	/**
 	 * The Url of the cast.
 	 */
@@ -63,6 +65,13 @@ public class CastInfo implements Serializable {
 	 */
 	public CastInfo(URL url, String name, String characterName, String job,
 			int ID, URL thumb, String department) {
+		Log.log("Creating CastInfo object with url: "
+				+ ((url == null) ? "NULL" : url.toString())
+				+ ",character name: " + characterName + ", job: " + job
+				+ "id: " + ID + ",thumb URL: "
+				+ ((thumb == null) ? "NULL" : thumb.toString())
+				+ ", department: " + department + " and name: " + name,
+				Verbosity.VERBOSE);
 		setUrl(url);
 		setName(name);
 		setCharacterName(characterName);

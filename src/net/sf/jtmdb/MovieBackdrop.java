@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.jtmdb.Log.Verbosity;
+
 /**
  * This class represents a Movie Backdrop.
  * 
@@ -41,6 +43,8 @@ public class MovieBackdrop implements Serializable {
 	 */
 	public MovieBackdrop(String ID) {
 		this.ID = ID;
+		Log.log("Creating MovieBackdrop object with id: " + ID,
+				Verbosity.VERBOSE);
 	}
 
 	/**

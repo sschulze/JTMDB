@@ -14,6 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import net.sf.jtmdb.Log.Verbosity;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -96,6 +98,7 @@ public class Person implements Serializable {
 	 *            class description {@link Person}).
 	 */
 	public Person(JSONObject jsonObject, boolean isReduced) {
+		Log.log("Creating Person object from JSONObject", Verbosity.VERBOSE);
 		setReduced(isReduced);
 		parseJSON(jsonObject);
 	}
@@ -114,6 +117,7 @@ public class Person implements Serializable {
 	 *            class description {@link Person}).
 	 */
 	public Person(JSONArray jsonObjectInArray, boolean isReduced) {
+		Log.log("Creating Person object from JSONArray", Verbosity.VERBOSE);
 		setReduced(isReduced);
 		parseJSON(jsonObjectInArray);
 	}
@@ -364,7 +368,7 @@ public class Person implements Serializable {
 		try {
 			return parseJSON(jsonArray.getJSONObject(0));
 		} catch (JSONException e) {
-			e.printStackTrace();
+			Log.log(e, Verbosity.ERROR);
 		}
 		return false;
 	}
@@ -382,6 +386,7 @@ public class Person implements Serializable {
 			try {
 				setUrl(new URL(jsonObject.getString("url")));
 			} catch (MalformedURLException e) {
+				Log.log(e, Verbosity.ERROR);
 				setUrl(null);
 			}
 			setID(jsonObject.getInt("id"));
@@ -393,6 +398,7 @@ public class Person implements Serializable {
 				try {
 					url = new URL(p.getString("url"));
 				} catch (MalformedURLException e) {
+					Log.log(e, Verbosity.ERROR);
 					e.printStackTrace();
 				}
 				String size = p.getString("size");
@@ -426,6 +432,7 @@ public class Person implements Serializable {
 						c.set(Calendar.MONTH, Integer.parseInt(month) - 1);
 						c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date));
 					} catch (NumberFormatException e) {
+						Log.log(e, Verbosity.ERROR);
 					}
 					setBirthday(c.getTime());
 				}
@@ -442,7 +449,7 @@ public class Person implements Serializable {
 					try {
 						filmUrl = new URL(film.getString("url"));
 					} catch (MalformedURLException e) {
-						e.printStackTrace();
+						Log.log(e, Verbosity.ERROR);
 					}
 					int filmID = film.getInt("id");
 					String filmJob = film.getString("job");
@@ -453,7 +460,7 @@ public class Person implements Serializable {
 				}
 			}
 		} catch (JSONException e) {
-			e.printStackTrace();
+			Log.log(e, Verbosity.ERROR);
 		}
 		return false;
 	}
@@ -471,36 +478,58 @@ public class Person implements Serializable {
 	 *         description {@link Person} and method {@link #isReduced()}).Will
 	 *         return null if a valid API key was not supplied to the
 	 *         {@link GeneralSettings}
-	 * @throws JSONException
 	 * @throws IOException
+	 * @throws JSONException
 	 */
-	public static List<Person> deepSearch(String name) throws Exception {
+	public static List<Person> deepSearch(String name) throws IOException,
+			JSONException {
+		Log.log("Performing a deep Person search for \"" + name + "\"",
+				Verbosity.NORMAL);
 		name = name.replaceAll(" ", "%20");
 		if (GeneralSettings.getApiKey() != null
-				&& !GeneralSettings.getApiKey().equals("") && name != null
-				&& !name.equals("")) {
-			URL call = new URL(
-					"http://api.themoviedb.org/2.1/Person.search/en/json/"
+				&& !GeneralSettings.getApiKey().equals("")) {
+			if (name != null && !name.equals("")) {
+				try {
+					URL call = new URL(GeneralSettings.BASE_URL
+							+ GeneralSettings.PERSON_SEARCH_URL
+							+ GeneralSettings.getAPILanguage() + "/"
+							+ GeneralSettings.API_MODE_URL
 							+ GeneralSettings.getApiKey() + "/" + name);
-			URLConnection yc = call.openConnection();
-			BufferedReader in = new BufferedReader(new InputStreamReader(yc
-					.getInputStream()));
-			String inputLine;
-			StringBuffer jsonString = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				jsonString.append(inputLine);
-			}
-			in.close();
-			List<Person> results = new LinkedList<Person>();
-			if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
-				JSONArray jsonArray = new JSONArray(jsonString.toString());
-				for (int i = 0; i < jsonArray.length(); i++) {
-					results
-							.add(getInfo(jsonArray.getJSONObject(i)
+					URLConnection yc = call.openConnection();
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(yc.getInputStream()));
+					String inputLine;
+					StringBuffer jsonString = new StringBuffer();
+					while ((inputLine = in.readLine()) != null) {
+						jsonString.append(inputLine);
+					}
+					in.close();
+					List<Person> results = new LinkedList<Person>();
+					if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+						JSONArray jsonArray = new JSONArray(jsonString
+								.toString());
+						for (int i = 0; i < jsonArray.length(); i++) {
+							results.add(getInfo(jsonArray.getJSONObject(i)
 									.getInt("id")));
+						}
+					} else {
+						Log.log("Search for \"" + name
+								+ "\" returned no results", Verbosity.NORMAL);
+					}
+					return results;
+				} catch (IOException e) {
+					Log.log(e, Verbosity.ERROR);
+					throw e;
+				} catch (JSONException e) {
+					Log.log(e, Verbosity.ERROR);
+					throw e;
 				}
+			} else {
+				Log.log("Cannot search for a null or empty string",
+						Verbosity.ERROR);
 			}
-			return results;
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
 		}
 		return null;
 	}
@@ -517,34 +546,58 @@ public class Person implements Serializable {
 	 *         description {@link Person} and method {@link #isReduced()}).Will
 	 *         return null if a valid API key was not supplied to the
 	 *         {@link GeneralSettings}
-	 * @throws JSONException
 	 * @throws IOException
+	 * @throws JSONException
 	 */
-	public static List<Person> search(String name) throws Exception {
+	public static List<Person> search(String name) throws IOException,
+			JSONException {
+		Log.log("Performing a Person search for \"" + name + "\"",
+				Verbosity.NORMAL);
 		name = name.replaceAll(" ", "%20");
 		if (GeneralSettings.getApiKey() != null
-				&& !GeneralSettings.getApiKey().equals("") && name != null
-				&& !name.equals("")) {
-			URL call = new URL(
-					"http://api.themoviedb.org/2.1/Person.search/en/json/"
+				&& !GeneralSettings.getApiKey().equals("")) {
+			if (name != null && !name.equals("")) {
+				try {
+					URL call = new URL(GeneralSettings.BASE_URL
+							+ GeneralSettings.PERSON_SEARCH_URL
+							+ GeneralSettings.getAPILanguage() + "/"
+							+ GeneralSettings.API_MODE_URL
 							+ GeneralSettings.getApiKey() + "/" + name);
-			URLConnection yc = call.openConnection();
-			BufferedReader in = new BufferedReader(new InputStreamReader(yc
-					.getInputStream()));
-			String inputLine;
-			StringBuffer jsonString = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				jsonString.append(inputLine);
-			}
-			in.close();
-			List<Person> results = new LinkedList<Person>();
-			if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
-				JSONArray jsonArray = new JSONArray(jsonString.toString());
-				for (int i = 0; i < jsonArray.length(); i++) {
-					results.add(new Person(jsonArray.getJSONObject(i), true));
+					URLConnection yc = call.openConnection();
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(yc.getInputStream()));
+					String inputLine;
+					StringBuffer jsonString = new StringBuffer();
+					while ((inputLine = in.readLine()) != null) {
+						jsonString.append(inputLine);
+					}
+					in.close();
+					List<Person> results = new LinkedList<Person>();
+					if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+						JSONArray jsonArray = new JSONArray(jsonString
+								.toString());
+						for (int i = 0; i < jsonArray.length(); i++) {
+							results.add(new Person(jsonArray.getJSONObject(i),
+									true));
+						}
+					} else {
+						Log.log("Search for \"" + name
+								+ "\" returned no results", Verbosity.NORMAL);
+					}
+					return results;
+				} catch (IOException e) {
+					Log.log(e, Verbosity.ERROR);
+					throw e;
+				} catch (JSONException e) {
+					Log.log(e, Verbosity.ERROR);
+					throw e;
 				}
+			} else {
+				Log.log("Cannot search for a null or empty string",
+						Verbosity.ERROR);
 			}
-			return results;
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
 		}
 		return null;
 	}
@@ -563,28 +616,44 @@ public class Person implements Serializable {
 	 *         if a valid API key was not supplied to the
 	 *         {@link GeneralSettings} or if the supplied ID did not correspond
 	 *         to a Person.
+	 * @throws IOException
 	 * @throws JSONException
-	 * @throws Exception
 	 */
-	public static Person getInfo(int ID) throws Exception {
+	public static Person getInfo(int ID) throws IOException, JSONException {
+		Log.log("Getting info for Person with id " + ID, Verbosity.NORMAL);
 		if (GeneralSettings.getApiKey() != null
 				&& !GeneralSettings.getApiKey().equals("")) {
-			URL call = new URL(
-					"http://api.themoviedb.org/2.1/Person.getInfo/en/json/"
-							+ GeneralSettings.getApiKey() + "/" + ID);
-			URLConnection yc = call.openConnection();
-			BufferedReader in = new BufferedReader(new InputStreamReader(yc
-					.getInputStream()));
-			String inputLine;
-			StringBuffer jsonString = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				jsonString.append(inputLine);
+			try {
+				URL call = new URL(GeneralSettings.BASE_URL
+						+ GeneralSettings.PERSON_GETINFO_URL
+						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.getApiKey() + "/" + ID);
+				URLConnection yc = call.openConnection();
+				BufferedReader in = new BufferedReader(new InputStreamReader(yc
+						.getInputStream()));
+				String inputLine;
+				StringBuffer jsonString = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					jsonString.append(inputLine);
+				}
+				in.close();
+				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					JSONArray jsonArray = new JSONArray(jsonString.toString());
+					return new Person(jsonArray, false);
+				} else {
+					Log.log("Getting info for Person with ID " + ID
+							+ " returned no results", Verbosity.NORMAL);
+				}
+			} catch (IOException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			} catch (JSONException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
 			}
-			in.close();
-			if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
-				JSONArray jsonArray = new JSONArray(jsonString.toString());
-				return new Person(jsonArray, false);
-			}
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
 		}
 		return null;
 	}

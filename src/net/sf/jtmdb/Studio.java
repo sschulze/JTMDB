@@ -3,6 +3,8 @@ package net.sf.jtmdb;
 import java.io.Serializable;
 import java.net.URL;
 
+import net.sf.jtmdb.Log.Verbosity;
+
 /**
  * This class represents a movie Studio.
  * 
@@ -30,6 +32,9 @@ public class Studio implements Serializable {
 	 *            The name of the Studio.
 	 */
 	public Studio(URL url, String name) {
+		Log.log("Creating Studio object with url: "
+				+ ((url == null) ? "NULL" : url.toString()) + " and name: "
+				+ name, Verbosity.VERBOSE);
 		setUrl(url);
 		setName(name);
 	}

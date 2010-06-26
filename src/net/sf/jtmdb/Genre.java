@@ -3,6 +3,8 @@ package net.sf.jtmdb;
 import java.io.Serializable;
 import java.net.URL;
 
+import net.sf.jtmdb.Log.Verbosity;
+
 /**
  * This class represents a movie Genre.
  * 
@@ -11,7 +13,7 @@ import java.net.URL;
 public class Genre implements Serializable {
 
 	private static final long serialVersionUID = 5612311477079904963L;
-	
+
 	/**
 	 * The url of the Genre.
 	 */
@@ -30,6 +32,9 @@ public class Genre implements Serializable {
 	 *            The name of the Genre.
 	 */
 	public Genre(URL url, String name) {
+		Log.log("Creating Genre object with url: "
+				+ ((url == null) ? "NULL" : url.toString()) + " and name: "
+				+ name, Verbosity.VERBOSE);
 		setUrl(url);
 		setName(name);
 	}

@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.jtmdb.Log.Verbosity;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -146,6 +148,7 @@ public class Movie implements Serializable {
 	 *            class description {@link Movie}).
 	 */
 	public Movie(JSONObject jsonObject, boolean isReduced) {
+		Log.log("Creating Movie object from JSONObject", Verbosity.VERBOSE);
 		setReduced(isReduced);
 		parseJSON(jsonObject);
 	}
@@ -163,6 +166,7 @@ public class Movie implements Serializable {
 	 *            class description).
 	 */
 	public Movie(JSONArray jsonObjectInArray, boolean isReduced) {
+		Log.log("Creating Movie object from JSONArray", Verbosity.VERBOSE);
 		setReduced(isReduced);
 		parseJSON(jsonObjectInArray);
 	}
@@ -709,6 +713,7 @@ public class Movie implements Serializable {
 	 * @throws IOException
 	 */
 	public static List<Movie> boxOffice() throws IOException, JSONException {
+		Log.log("Requesting the box office from the site.", Verbosity.NORMAL);
 		Set<Integer> ids = parseHTML(0);
 
 		List<Movie> movies = null;
@@ -735,7 +740,9 @@ public class Movie implements Serializable {
 	 * @throws IOException
 	 * @throws JSONException
 	 */
-	public static Set<Integer> boxOfficeIDs() throws IOException, JSONException {
+	public static Set<Integer> boxOfficeIDs() throws IOException {
+		Log.log("Requesting the box office ids from the site.",
+				Verbosity.NORMAL);
 		return parseHTML(0);
 	}
 
@@ -757,6 +764,8 @@ public class Movie implements Serializable {
 	 * @throws IOException
 	 */
 	public static List<Movie> mostPopular() throws IOException, JSONException {
+		Log.log("Requesting the most popular movies from the site.",
+				Verbosity.NORMAL);
 		Set<Integer> ids = parseHTML(1);
 
 		List<Movie> movies = null;
@@ -782,8 +791,9 @@ public class Movie implements Serializable {
 	 * @throws IOException
 	 * @throws JSONException
 	 */
-	public static Set<Integer> mostPopularIDs() throws IOException,
-			JSONException {
+	public static Set<Integer> mostPopularIDs() throws IOException {
+		Log.log("Requesting the most popular movies' ids from the site.",
+				Verbosity.NORMAL);
 		return parseHTML(1);
 	}
 
@@ -797,33 +807,39 @@ public class Movie implements Serializable {
 	 *            is for the most popular.
 	 * @return A list of movies.
 	 * @throws IOException
-	 * @throws JSONException
 	 */
-	private static Set<Integer> parseHTML(int part) throws IOException,
-			JSONException {
-		URL call = new URL("http://www.themoviedb.org/");
-		URLConnection yc = call.openConnection();
-		BufferedReader in = new BufferedReader(new InputStreamReader(yc
-				.getInputStream()));
-		String inputLine;
-		StringBuffer xmlString = new StringBuffer();
-		while ((inputLine = in.readLine()) != null) {
-			xmlString.append(inputLine);
-		}
-		in.close();
-
-		String[] parts = xmlString.toString().split("first most-popular");
-
-		Pattern p = Pattern.compile("/movie/(\\d+)");
-		Matcher match = p.matcher(parts[part]);
+	private static Set<Integer> parseHTML(int part) throws IOException {
+		Log.log("Parsing the site homepage.", Verbosity.NORMAL);
 		Set<Integer> ids = new LinkedHashSet<Integer>();
-		while (match.find()) {
-			try {
-				int id = Integer.parseInt(match.group(1));
-				ids.add(id);
-			} catch (NumberFormatException e) {
-
+		try {
+			URL call = new URL(GeneralSettings.HOMEPAGE_URL);
+			URLConnection yc = call.openConnection();
+			BufferedReader in = new BufferedReader(new InputStreamReader(yc
+					.getInputStream()));
+			String inputLine;
+			StringBuffer xmlString = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				xmlString.append(inputLine);
 			}
+			in.close();
+
+			String[] parts = xmlString.toString().split("first most-popular");
+
+			Pattern p = Pattern.compile("/movie/(\\d+)");
+			Matcher match = p.matcher(parts[part]);
+			while (match.find()) {
+				try {
+					int id = Integer.parseInt(match.group(1));
+					ids.add(id);
+				} catch (NumberFormatException e) {
+					Log.log("Could not parse integer for Movie ID",
+							Verbosity.ERROR);
+					Log.log(e, Verbosity.ERROR);
+				}
+			}
+		} catch (IOException e) {
+			Log.log(e, Verbosity.ERROR);
+			throw e;
 		}
 		return ids;
 	}
@@ -841,37 +857,58 @@ public class Movie implements Serializable {
 	 *         {@link Movie} and method {@link #isReduced()}).Will return null
 	 *         if a valid API key was not supplied to the
 	 *         {@link GeneralSettings}
-	 * @throws JSONException
 	 * @throws IOException
+	 * @throws JSONException
 	 */
-	public static List<Movie> deepSearch(String name) throws JSONException,
-			IOException {
+	public static List<Movie> deepSearch(String name) throws IOException,
+			JSONException {
+		Log.log("Performing a deep Movie search for \"" + name + "\"",
+				Verbosity.NORMAL);
 		name = name.replaceAll(" ", "%20");
 		if (GeneralSettings.getApiKey() != null
-				&& !GeneralSettings.getApiKey().equals("") && name != null
-				&& !name.equals("")) {
-			URL call = new URL(
-					"http://api.themoviedb.org/2.1/Movie.search/en/json/"
+				&& !GeneralSettings.getApiKey().equals("")) {
+			if (name != null && !name.equals("")) {
+				try {
+					URL call = new URL(GeneralSettings.BASE_URL
+							+ GeneralSettings.MOVIE_SEARCH_URL
+							+ GeneralSettings.getAPILanguage() + "/"
+							+ GeneralSettings.API_MODE_URL
 							+ GeneralSettings.getApiKey() + "/" + name);
-			URLConnection yc = call.openConnection();
-			BufferedReader in = new BufferedReader(new InputStreamReader(yc
-					.getInputStream()));
-			String inputLine;
-			StringBuffer jsonString = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				jsonString.append(inputLine);
-			}
-			in.close();
-			List<Movie> results = new LinkedList<Movie>();
-			if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
-				JSONArray jsonArray = new JSONArray(jsonString.toString());
-				for (int i = 0; i < jsonArray.length(); i++) {
-					results
-							.add(getInfo(jsonArray.getJSONObject(i)
+					URLConnection yc = call.openConnection();
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(yc.getInputStream()));
+					String inputLine;
+					StringBuffer jsonString = new StringBuffer();
+					while ((inputLine = in.readLine()) != null) {
+						jsonString.append(inputLine);
+					}
+					in.close();
+					List<Movie> results = new LinkedList<Movie>();
+					if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+						JSONArray jsonArray = new JSONArray(jsonString
+								.toString());
+						for (int i = 0; i < jsonArray.length(); i++) {
+							results.add(getInfo(jsonArray.getJSONObject(i)
 									.getInt("id")));
+						}
+					} else {
+						Log.log("Search for \"" + name
+								+ "\" returned no results", Verbosity.NORMAL);
+					}
+					return results;
+				} catch (IOException e) {
+					Log.log(e, Verbosity.ERROR);
+					throw e;
+				} catch (JSONException e) {
+					Log.log(e, Verbosity.ERROR);
+					throw e;
 				}
+			} else {
+				Log.log("Cannot search for a null or empty string",
+						Verbosity.ERROR);
 			}
-			return results;
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
 		}
 		return null;
 	}
@@ -888,35 +925,58 @@ public class Movie implements Serializable {
 	 *         description {@link Movie} and method {@link #isReduced()}).Will
 	 *         return null if a valid API key was not supplied to the
 	 *         {@link GeneralSettings}
-	 * @throws JSONException
 	 * @throws IOException
+	 * @throws JSONException
 	 */
-	public static List<Movie> search(String name) throws JSONException,
-			IOException {
+	public static List<Movie> search(String name) throws IOException,
+			JSONException {
+		Log.log("Performing a Movie search for \"" + name + "\"",
+				Verbosity.NORMAL);
 		name = name.replaceAll(" ", "%20");
 		if (GeneralSettings.getApiKey() != null
-				&& !GeneralSettings.getApiKey().equals("") && name != null
-				&& !name.equals("")) {
-			URL call = new URL(
-					"http://api.themoviedb.org/2.1/Movie.search/en/json/"
+				&& !GeneralSettings.getApiKey().equals("")) {
+			if (name != null && !name.equals("")) {
+				try {
+					URL call = new URL(GeneralSettings.BASE_URL
+							+ GeneralSettings.MOVIE_SEARCH_URL
+							+ GeneralSettings.getAPILanguage() + "/"
+							+ GeneralSettings.API_MODE_URL
 							+ GeneralSettings.getApiKey() + "/" + name);
-			URLConnection yc = call.openConnection();
-			BufferedReader in = new BufferedReader(new InputStreamReader(yc
-					.getInputStream()));
-			String inputLine;
-			StringBuffer jsonString = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				jsonString.append(inputLine);
-			}
-			in.close();
-			List<Movie> results = new LinkedList<Movie>();
-			if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
-				JSONArray jsonArray = new JSONArray(jsonString.toString());
-				for (int i = 0; i < jsonArray.length(); i++) {
-					results.add(new Movie(jsonArray.getJSONObject(i), true));
+					URLConnection yc = call.openConnection();
+					BufferedReader in = new BufferedReader(
+							new InputStreamReader(yc.getInputStream()));
+					String inputLine;
+					StringBuffer jsonString = new StringBuffer();
+					while ((inputLine = in.readLine()) != null) {
+						jsonString.append(inputLine);
+					}
+					in.close();
+					List<Movie> results = new LinkedList<Movie>();
+					if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+						JSONArray jsonArray = new JSONArray(jsonString
+								.toString());
+						for (int i = 0; i < jsonArray.length(); i++) {
+							results.add(new Movie(jsonArray.getJSONObject(i),
+									true));
+						}
+					} else {
+						Log.log("Search for \"" + name
+								+ "\" returned no results", Verbosity.NORMAL);
+					}
+					return results;
+				} catch (IOException e) {
+					Log.log(e, Verbosity.ERROR);
+					throw e;
+				} catch (JSONException e) {
+					Log.log(e, Verbosity.ERROR);
+					throw e;
 				}
+			} else {
+				Log.log("Cannot search for a null or empty string",
+						Verbosity.ERROR);
 			}
-			return results;
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
 		}
 		return null;
 	}
@@ -935,28 +995,44 @@ public class Movie implements Serializable {
 	 *         if a valid API key was not supplied to the
 	 *         {@link GeneralSettings} or if the supplied ID did not correspond
 	 *         to a Movie.
+	 * @throws IOException
 	 * @throws JSONException
-	 * @throws Exception
 	 */
 	public static Movie getInfo(int ID) throws IOException, JSONException {
+		Log.log("Getting info for Movie with id " + ID, Verbosity.NORMAL);
 		if (GeneralSettings.getApiKey() != null
 				&& !GeneralSettings.getApiKey().equals("")) {
-			URL call = new URL(
-					"http://api.themoviedb.org/2.1/Movie.getInfo/en/json/"
-							+ GeneralSettings.getApiKey() + "/" + ID);
-			URLConnection yc = call.openConnection();
-			BufferedReader in = new BufferedReader(new InputStreamReader(yc
-					.getInputStream()));
-			String inputLine;
-			StringBuffer jsonString = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				jsonString.append(inputLine);
+			try {
+				URL call = new URL(GeneralSettings.BASE_URL
+						+ GeneralSettings.MOVIE_GETINFO_URL
+						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.getApiKey() + "/" + ID);
+				URLConnection yc = call.openConnection();
+				BufferedReader in = new BufferedReader(new InputStreamReader(yc
+						.getInputStream()));
+				String inputLine;
+				StringBuffer jsonString = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					jsonString.append(inputLine);
+				}
+				in.close();
+				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					JSONArray jsonArray = new JSONArray(jsonString.toString());
+					return new Movie(jsonArray, false);
+				} else {
+					Log.log("Getting info for Movie with id " + ID
+							+ " returned no results", Verbosity.NORMAL);
+				}
+			} catch (IOException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			} catch (JSONException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
 			}
-			in.close();
-			if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
-				JSONArray jsonArray = new JSONArray(jsonString.toString());
-				return new Movie(jsonArray, false);
-			}
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
 		}
 		return null;
 	}
@@ -976,86 +1052,104 @@ public class Movie implements Serializable {
 	 */
 	public static MovieImages getImages(int ID) throws IOException,
 			JSONException {
+		Log.log("Getting images for Movie with ID " + ID, Verbosity.NORMAL);
 		if (GeneralSettings.getApiKey() != null
 				&& !GeneralSettings.getApiKey().equals("")) {
-			URL call = new URL(
-					"http://api.themoviedb.org/2.1/Movie.getImages/en/json/"
-							+ GeneralSettings.getApiKey() + "/" + ID);
-			URLConnection yc = call.openConnection();
-			BufferedReader in = new BufferedReader(new InputStreamReader(yc
-					.getInputStream()));
-			String inputLine;
-			StringBuffer jsonString = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				jsonString.append(inputLine);
-			}
-			in.close();
-			if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
-				JSONObject json = new JSONArray(jsonString.toString())
-						.getJSONObject(0);
-				JSONArray postersArray = json.getJSONArray("posters");
-				MovieImages images = new MovieImages();
-				for (int i = 0; i < postersArray.length(); i++) {
-					JSONObject image = postersArray.getJSONObject(i)
-							.getJSONObject("image");
-					URL posterURL = null;
-					try {
-						posterURL = new URL(image.getString("url"));
-					} catch (MalformedURLException e) {
-					}
-					String posterID = image.getString("id");
-					String posterSize = image.getString("size");
-					MoviePoster.Size posterSizeEnum = MoviePoster.Size.ORIGINAL;
-					if (posterSize.equalsIgnoreCase("thumb")) {
-						posterSizeEnum = MoviePoster.Size.THUMB;
-					} else if (posterSize.equalsIgnoreCase("mid")) {
-						posterSizeEnum = MoviePoster.Size.MID;
-					} else if (posterSize.equalsIgnoreCase("cover")) {
-						posterSizeEnum = MoviePoster.Size.COVER;
-					}
-					MoviePoster poster = null;
-					for (MoviePoster p : images.posters) {
-						if (p.getID().equals(posterID)) {
-							poster = p;
-						}
-					}
-					if (poster == null) {
-						poster = new MoviePoster(posterID);
-						images.posters.add(poster);
-					}
-					poster.setImage(posterSizeEnum, posterURL);
+			try {
+				URL call = new URL(GeneralSettings.BASE_URL
+						+ GeneralSettings.MOVIE_GETIMAGES_URL
+						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.getApiKey() + "/" + ID);
+				URLConnection yc = call.openConnection();
+				BufferedReader in = new BufferedReader(new InputStreamReader(yc
+						.getInputStream()));
+				String inputLine;
+				StringBuffer jsonString = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					jsonString.append(inputLine);
 				}
-				postersArray = json.getJSONArray("backdrops");
-				for (int i = 0; i < postersArray.length(); i++) {
-					JSONObject image = postersArray.getJSONObject(i)
-							.getJSONObject("image");
-					URL posterURL = null;
-					try {
-						posterURL = new URL(image.getString("url"));
-					} catch (MalformedURLException e) {
-					}
-					String posterID = image.getString("id");
-					String posterSize = image.getString("size");
-					MovieBackdrop.Size posterSizeEnum = MovieBackdrop.Size.ORIGINAL;
-					if (posterSize.equalsIgnoreCase("thumb")) {
-						posterSizeEnum = MovieBackdrop.Size.THUMB;
-					} else if (posterSize.equalsIgnoreCase("poster")) {
-						posterSizeEnum = MovieBackdrop.Size.POSTER;
-					}
-					MovieBackdrop backdrop = null;
-					for (MovieBackdrop p : images.backdrops) {
-						if (p.getID().equals(posterID)) {
-							backdrop = p;
+				in.close();
+				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					JSONObject json = new JSONArray(jsonString.toString())
+							.getJSONObject(0);
+					JSONArray postersArray = json.getJSONArray("posters");
+					MovieImages images = new MovieImages();
+					for (int i = 0; i < postersArray.length(); i++) {
+						JSONObject image = postersArray.getJSONObject(i)
+								.getJSONObject("image");
+						URL posterURL = null;
+						try {
+							posterURL = new URL(image.getString("url"));
+						} catch (MalformedURLException e) {
+							Log.log(e, Verbosity.ERROR);
 						}
+						String posterID = image.getString("id");
+						String posterSize = image.getString("size");
+						MoviePoster.Size posterSizeEnum = MoviePoster.Size.ORIGINAL;
+						if (posterSize.equalsIgnoreCase("thumb")) {
+							posterSizeEnum = MoviePoster.Size.THUMB;
+						} else if (posterSize.equalsIgnoreCase("mid")) {
+							posterSizeEnum = MoviePoster.Size.MID;
+						} else if (posterSize.equalsIgnoreCase("cover")) {
+							posterSizeEnum = MoviePoster.Size.COVER;
+						}
+						MoviePoster poster = null;
+						for (MoviePoster p : images.posters) {
+							if (p.getID().equals(posterID)) {
+								poster = p;
+							}
+						}
+						if (poster == null) {
+							poster = new MoviePoster(posterID);
+							images.posters.add(poster);
+						}
+						poster.setImage(posterSizeEnum, posterURL);
 					}
-					if (backdrop == null) {
-						backdrop = new MovieBackdrop(posterID);
-						images.backdrops.add(backdrop);
+					postersArray = json.getJSONArray("backdrops");
+					for (int i = 0; i < postersArray.length(); i++) {
+						JSONObject image = postersArray.getJSONObject(i)
+								.getJSONObject("image");
+						URL posterURL = null;
+						try {
+							posterURL = new URL(image.getString("url"));
+						} catch (MalformedURLException e) {
+							Log.log(e, Verbosity.ERROR);
+						}
+						String posterID = image.getString("id");
+						String posterSize = image.getString("size");
+						MovieBackdrop.Size posterSizeEnum = MovieBackdrop.Size.ORIGINAL;
+						if (posterSize.equalsIgnoreCase("thumb")) {
+							posterSizeEnum = MovieBackdrop.Size.THUMB;
+						} else if (posterSize.equalsIgnoreCase("poster")) {
+							posterSizeEnum = MovieBackdrop.Size.POSTER;
+						}
+						MovieBackdrop backdrop = null;
+						for (MovieBackdrop p : images.backdrops) {
+							if (p.getID().equals(posterID)) {
+								backdrop = p;
+							}
+						}
+						if (backdrop == null) {
+							backdrop = new MovieBackdrop(posterID);
+							images.backdrops.add(backdrop);
+						}
+						backdrop.setImage(posterSizeEnum, posterURL);
 					}
-					backdrop.setImage(posterSizeEnum, posterURL);
+					return images;
+				} else {
+					Log.log("Search for images of Movie with id " + ID
+							+ " returned no results", Verbosity.NORMAL);
 				}
-				return images;
+			} catch (IOException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			} catch (JSONException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
 			}
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
 		}
 		return null;
 	}
@@ -1071,7 +1165,7 @@ public class Movie implements Serializable {
 		try {
 			parseJSON(jsonArray.getJSONObject(0));
 		} catch (JSONException e) {
-			e.printStackTrace();
+			Log.log(e, Verbosity.ERROR);
 		}
 	}
 
@@ -1094,6 +1188,7 @@ public class Movie implements Serializable {
 			try {
 				setUrl(new URL(jsonObject.getString("url")));
 			} catch (MalformedURLException e) {
+				Log.log(e, Verbosity.ERROR);
 				setUrl(null);
 			}
 			JSONArray postersArray = jsonObject.getJSONArray("posters");
@@ -1104,6 +1199,7 @@ public class Movie implements Serializable {
 				try {
 					posterURL = new URL(image.getString("url"));
 				} catch (MalformedURLException e) {
+					Log.log(e, Verbosity.ERROR);
 				}
 				String posterID = image.getString("id");
 				String posterSize = image.getString("size");
@@ -1135,6 +1231,7 @@ public class Movie implements Serializable {
 				try {
 					posterURL = new URL(image.getString("url"));
 				} catch (MalformedURLException e) {
+					Log.log(e, Verbosity.ERROR);
 				}
 				String posterID = image.getString("id");
 				String posterSize = image.getString("size");
@@ -1169,6 +1266,7 @@ public class Movie implements Serializable {
 					c.set(Calendar.MONTH, Integer.parseInt(month) - 1);
 					c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date));
 				} catch (NumberFormatException e) {
+					Log.log(e, Verbosity.ERROR);
 				}
 				setReleasedDate(c.getTime());
 			}
@@ -1182,6 +1280,7 @@ public class Movie implements Serializable {
 					try {
 						genreUrl = new URL(genreObject.getString("url"));
 					} catch (MalformedURLException e) {
+						Log.log(e, Verbosity.ERROR);
 					}
 					getGenres().add(new Genre(genreUrl, genreName));
 				}
@@ -1193,6 +1292,7 @@ public class Movie implements Serializable {
 					try {
 						studioUrl = new URL(studioObject.getString("url"));
 					} catch (MalformedURLException e) {
+						Log.log(e, Verbosity.ERROR);
 					}
 					getStudios().add(new Studio(studioUrl, studioName));
 				}
@@ -1205,6 +1305,7 @@ public class Movie implements Serializable {
 					try {
 						countryUrl = new URL(countryObject.getString("url"));
 					} catch (MalformedURLException e) {
+						Log.log(e, Verbosity.ERROR);
 					}
 					getCountries().add(
 							new Country(countryUrl, countryName, countryCode));
@@ -1214,17 +1315,19 @@ public class Movie implements Serializable {
 				try {
 					setTrailer(new URL(jsonObject.getString("trailer")));
 				} catch (MalformedURLException e) {
+					Log.log(e, Verbosity.ERROR);
 					setTrailer(null);
 				}
 				try {
 					setRuntime(jsonObject.getInt("runtime"));
 				} catch (JSONException e) {
-					e.printStackTrace();
+					Log.log(e, Verbosity.ERROR);
 				}
 				try {
 					setHomepage(new URL(jsonObject.getString("homepage")));
 				} catch (MalformedURLException e) {
 					setHomepage(null);
+					Log.log(e, Verbosity.ERROR);
 				}
 				JSONArray castArray = jsonObject.getJSONArray("cast");
 				for (int i = 0; i < castArray.length(); i++) {
@@ -1234,12 +1337,14 @@ public class Movie implements Serializable {
 					try {
 						castThumb = new URL(castObject.getString("profile"));
 					} catch (MalformedURLException e) {
+						Log.log(e, Verbosity.ERROR);
 					}
 					String castCharacter = castObject.getString("character");
 					URL castUrl = null;
 					try {
 						castUrl = new URL(castObject.getString("url"));
 					} catch (MalformedURLException e) {
+						Log.log(e, Verbosity.ERROR);
 					}
 					String castJob = castObject.getString("job");
 					int castID = castObject.getInt("id");
@@ -1251,17 +1356,17 @@ public class Movie implements Serializable {
 				try {
 					setBudget(jsonObject.getInt("budget"));
 				} catch (JSONException e) {
-					e.printStackTrace();
+					Log.log(e, Verbosity.ERROR);
 				}
 				try {
 					setRevenue(jsonObject.getInt("revenue"));
 				} catch (JSONException e) {
-					e.printStackTrace();
+					Log.log(e, Verbosity.ERROR);
 				}
 			}
 			return true;
 		} catch (JSONException e) {
-			e.printStackTrace();
+			Log.log(e, Verbosity.ERROR);
 		}
 		return false;
 	}

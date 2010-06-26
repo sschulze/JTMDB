@@ -3,6 +3,8 @@ package net.sf.jtmdb;
 import java.io.Serializable;
 import java.net.URL;
 
+import net.sf.jtmdb.Log.Verbosity;
+
 /**
  * This class represents a Country.
  * 
@@ -11,7 +13,7 @@ import java.net.URL;
 public class Country implements Serializable {
 
 	private static final long serialVersionUID = 5337925489671786943L;
-	
+
 	/**
 	 * The url of the Country.
 	 */
@@ -36,6 +38,9 @@ public class Country implements Serializable {
 	 *            The code of the Country.
 	 */
 	public Country(URL url, String name, String code) {
+		Log.log("Creating Country object with url: "
+				+ ((url == null) ? "NULL" : url.toString()) + ", code: " + code
+				+ " and name: " + name, Verbosity.VERBOSE);
 		setUrl(url);
 		setName(name);
 		setCode(code);

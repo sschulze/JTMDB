@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.jtmdb.Log.Verbosity;
+
 /**
  * This class represents a Person profile picture.
  * 
@@ -41,6 +43,8 @@ public class PersonProfile implements Serializable {
 	 */
 	public PersonProfile(String ID) {
 		this.ID = ID;
+		Log.log("Creating PersonProfile object with id: " + ID,
+				Verbosity.VERBOSE);
 	}
 
 	/**

@@ -3,6 +3,8 @@ package net.sf.jtmdb;
 import java.io.Serializable;
 import java.net.URL;
 
+import net.sf.jtmdb.Log.Verbosity;
+
 /**
  * This class represents an entry in the filmography list of a Person.
  * 
@@ -55,6 +57,11 @@ public class FilmographyInfo implements Serializable {
 	 */
 	public FilmographyInfo(String name, String characterName, URL url, int ID,
 			String job, String department) {
+		Log.log("Creating FilmographyInfo object with url: "
+				+ ((url == null) ? "NULL" : url.toString())
+				+ ",character name: " + characterName + ", job: " + job
+				+ "id: " + ID + ", department: " + department + " and name: "
+				+ name, Verbosity.VERBOSE);
 		setName(name);
 		setCharacterName(characterName);
 		setUrl(url);
