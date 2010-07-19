@@ -76,6 +76,10 @@ public class Movie implements Serializable {
 	 */
 	private boolean translated;
 	/**
+	 * Is the movie for adult audiences only.
+	 */
+	private boolean adult;
+	/**
 	 * The language of the Movie.
 	 */
 	private String language;
@@ -226,6 +230,25 @@ public class Movie implements Serializable {
 	 */
 	public void setTranslated(boolean translated) {
 		this.translated = translated;
+	}
+
+	/**
+	 * Returns true if the Movie is adult only.
+	 * 
+	 * @return True if the Movie is adult only.
+	 */
+	public boolean isAdult() {
+		return adult;
+	}
+
+	/**
+	 * Sets whether the Movie is adult only.
+	 * 
+	 * @param adult
+	 *            The adult flag of the Movie.
+	 */
+	public void setAdult(boolean adult) {
+		this.adult = adult;
 	}
 
 	/**
@@ -1180,6 +1203,7 @@ public class Movie implements Serializable {
 			setLanguage(jsonObject.getString("language"));
 			setMovieType(jsonObject.getString("movie_type"));
 			setTranslated(jsonObject.getBoolean("translated"));
+			setAdult(jsonObject.getBoolean("adult"));
 			setRating(jsonObject.getDouble("rating"));
 			setAlternativeName(jsonObject.getString("alternative_name"));
 			setName(jsonObject.getString("name"));
