@@ -39,6 +39,9 @@ public class Log {
 		 *         provided.
 		 */
 		public boolean moreVerboseThan(Verbosity verbosity) {
+			if (verbosity == null) {
+				return true;
+			}
 			switch (this) {
 			case VERBOSE:
 				return true;
@@ -52,6 +55,7 @@ public class Log {
 			}
 			return false;
 		}
+
 	}
 
 	private Log() {
@@ -63,11 +67,15 @@ public class Log {
 	 * 
 	 * @return The header of each line in the log.
 	 */
-	private static String header() {
+	private static String header(Verbosity verbosity) {
 		Date d = new Date();
-		return DateFormat.getDateInstance(DateFormat.SHORT).format(d) + " "
+		return DateFormat.getDateInstance(DateFormat.SHORT).format(d)
+				+ " "
 				+ DateFormat.getTimeInstance(DateFormat.LONG).format(d)
-				+ " THREAD: " + Thread.currentThread().getName() + ": ";
+				+ " THREAD: "
+				+ Thread.currentThread().getName()
+				+ ((verbosity == null) ? "" : (" VERBOSITY: " + verbosity
+						.toString())) + " : ";
 	}
 
 	/**
@@ -78,9 +86,7 @@ public class Log {
 	 *            The text to print to the log.
 	 */
 	public static synchronized void log(String text) {
-		if (GeneralSettings.isLogEnabled()) {
-			GeneralSettings.getLogStream().println(header() + text);
-		}
+		log(text, null);
 	}
 
 	/**
@@ -94,8 +100,9 @@ public class Log {
 	 *            The minimum log verbosity needed to log this text.
 	 */
 	public static synchronized void log(String text, Verbosity verbosity) {
-		if (GeneralSettings.getLogVerbosity().moreVerboseThan(verbosity)) {
-			log(text);
+		if (GeneralSettings.getLogVerbosity().moreVerboseThan(verbosity)
+				&& GeneralSettings.isLogEnabled()) {
+			GeneralSettings.getLogStream().println(header(verbosity) + text);
 		}
 	}
 
@@ -107,10 +114,7 @@ public class Log {
 	 *            The throwable whose stack to print to the log.
 	 */
 	public static synchronized void log(Throwable throwable) {
-		if (GeneralSettings.isLogEnabled()) {
-			log("");
-			throwable.printStackTrace(GeneralSettings.getLogStream());
-		}
+		log(throwable, null);
 	}
 
 	/**
@@ -124,8 +128,10 @@ public class Log {
 	 *            The minimum log verbosity needed to log this throwable.
 	 */
 	public static synchronized void log(Throwable throwable, Verbosity verbosity) {
-		if (GeneralSettings.getLogVerbosity().moreVerboseThan(verbosity)) {
-			log(throwable);
+		if (GeneralSettings.getLogVerbosity().moreVerboseThan(verbosity)
+				&& GeneralSettings.isLogEnabled()) {
+			log("", verbosity);
+			throwable.printStackTrace(GeneralSettings.getLogStream());
 		}
 	}
 
