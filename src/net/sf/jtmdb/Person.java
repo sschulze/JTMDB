@@ -484,12 +484,13 @@ public class Person implements Serializable {
 						Log.log(e, Verbosity.ERROR);
 					}
 					int filmID = film.getInt("id");
+					int castID = film.getInt("cast_id");
 					String filmJob = film.getString("job");
 					String filmDepartment = film.getString("department");
 					getFilmography().add(
 							new FilmographyInfo(filmName, filmCharacter,
-									filmUrl, filmID, filmJob, filmDepartment,
-									film.toString()));
+									filmUrl, filmID, castID, filmJob,
+									filmDepartment, film.toString()));
 				}
 			}
 		} catch (JSONException e) {

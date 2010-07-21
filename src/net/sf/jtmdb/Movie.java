@@ -1411,11 +1411,12 @@ public class Movie implements Serializable {
 						Log.log(e, Verbosity.ERROR);
 					}
 					String castJob = castObject.getString("job");
-					int castID = castObject.getInt("id");
+					int castID = castObject.getInt("cast_id");
+					int personID = castObject.getInt("id");
 					String castDept = castObject.getString("department");
 					CastInfo castInfo = new CastInfo(castUrl, castName,
-							castCharacter, castJob, castID, castThumb,
-							castDept, castObject.toString());
+							castCharacter, castJob, personID, castID,
+							castThumb, castDept, castObject.toString());
 					getCast().add(castInfo);
 				}
 				try {

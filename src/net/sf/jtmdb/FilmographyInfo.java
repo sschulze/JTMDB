@@ -34,6 +34,10 @@ public class FilmographyInfo implements Serializable {
 	 */
 	private int ID;
 	/**
+	 * The ID of the cast.
+	 */
+	private int castID;
+	/**
 	 * The job description in the Movie.
 	 */
 	private String job;
@@ -57,6 +61,8 @@ public class FilmographyInfo implements Serializable {
 	 *            The url of the Movie.
 	 * @param ID
 	 *            The ID of the Movie.
+	 * @param castID
+	 *            The ID of the cast.
 	 * @param job
 	 *            The job description in the Movie.
 	 * @param department
@@ -65,17 +71,18 @@ public class FilmographyInfo implements Serializable {
 	 *            The json string that created this FilmographyInfo object.
 	 */
 	public FilmographyInfo(String name, String characterName, URL url, int ID,
-			String job, String department, String jsonOrigin) {
+			int castID, String job, String department, String jsonOrigin) {
 		Log.log("Creating FilmographyInfo object with url: "
 				+ ((url == null) ? "NULL" : url.toString())
 				+ ",character name: " + characterName + ", job: " + job
-				+ "id: " + ID + ", department: " + department + " and name: "
-				+ name, Verbosity.VERBOSE);
+				+ "id: " + ID + ", castID: " + castID + ", department: "
+				+ department + " and name: " + name, Verbosity.VERBOSE);
 		this.jsonOrigin = jsonOrigin;
 		setName(name);
 		setCharacterName(characterName);
 		setUrl(url);
 		setID(ID);
+		setCastID(castID);
 		setJob(job);
 		setDepartment(department);
 	}
@@ -86,7 +93,8 @@ public class FilmographyInfo implements Serializable {
 			return true;
 		}
 		if (obj instanceof FilmographyInfo) {
-			if (((FilmographyInfo) obj).getID() == getID()) {
+			if (((FilmographyInfo) obj).getCastID() == getCastID()
+					&& ((FilmographyInfo) obj).getID() == getID()) {
 				return true;
 			}
 		}
@@ -95,7 +103,13 @@ public class FilmographyInfo implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return getID();
+		// We will use the algorithm used in the hash code
+		// calculation for the Point2D class;
+		int x = getID();
+		int y = getCastID();
+		long bits = java.lang.Double.doubleToLongBits(x);
+		bits ^= java.lang.Double.doubleToLongBits(y) * 31;
+		return (((int) bits) ^ ((int) (bits >> 32)));
 	}
 
 	/**
@@ -197,6 +211,25 @@ public class FilmographyInfo implements Serializable {
 	 */
 	public void setID(int iD) {
 		ID = iD;
+	}
+
+	/**
+	 * The ID of the cast.
+	 * 
+	 * @return The ID of the cast.
+	 */
+	public int getCastID() {
+		return castID;
+	}
+
+	/**
+	 * Sets the ID of the cast.
+	 * 
+	 * @param castID
+	 *            The ID of the cast.
+	 */
+	public void setCastID(int castID) {
+		this.castID = castID;
 	}
 
 	/**

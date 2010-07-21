@@ -36,9 +36,13 @@ public class CastInfo implements Serializable {
 	 */
 	private String job;
 	/**
-	 * The ID of the cast.
+	 * The ID of the person.
 	 */
 	private int ID;
+	/**
+	 * The ID of the cast.
+	 */
+	private int castID;
 	/**
 	 * The thumbnail Url of the cast.
 	 */
@@ -64,6 +68,8 @@ public class CastInfo implements Serializable {
 	 * @param job
 	 *            The job description of the cast.
 	 * @param ID
+	 *            The ID of the person.
+	 * @param castID
 	 *            The ID of the cast.
 	 * @param thumb
 	 *            The thumbnail Url of the cast.
@@ -73,11 +79,11 @@ public class CastInfo implements Serializable {
 	 *            The json string that created this CastInfo object.
 	 */
 	public CastInfo(URL url, String name, String characterName, String job,
-			int ID, URL thumb, String department, String jsonOrigin) {
+			int ID, int castID, URL thumb, String department, String jsonOrigin) {
 		Log.log("Creating CastInfo object with url: "
 				+ ((url == null) ? "NULL" : url.toString())
 				+ ",character name: " + characterName + ", job: " + job
-				+ "id: " + ID + ",thumb URL: "
+				+ "id: " + ID + ", castID: +" + castID + ", thumb URL: "
 				+ ((thumb == null) ? "NULL" : thumb.toString())
 				+ ", department: " + department + " and name: " + name,
 				Verbosity.VERBOSE);
@@ -87,6 +93,7 @@ public class CastInfo implements Serializable {
 		setCharacterName(characterName);
 		setJob(job);
 		setID(ID);
+		setCastID(castID);
 		setThumb(thumb);
 		setDepartment(department);
 	}
@@ -97,7 +104,8 @@ public class CastInfo implements Serializable {
 			return true;
 		}
 		if (obj instanceof CastInfo) {
-			if (((CastInfo) obj).getID() == getID()) {
+			if (((CastInfo) obj).getCastID() == getCastID()
+					&& ((CastInfo) obj).getID() == getID()) {
 				return true;
 			}
 		}
@@ -106,7 +114,13 @@ public class CastInfo implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return getID();
+		// We will use the algorithm used in the hash code
+		// calculation for the Point2D class;
+		int x = getID();
+		int y = getCastID();
+		long bits = java.lang.Double.doubleToLongBits(x);
+		bits ^= java.lang.Double.doubleToLongBits(y) * 31;
+		return (((int) bits) ^ ((int) (bits >> 32)));
 	}
 
 	/**
@@ -211,22 +225,41 @@ public class CastInfo implements Serializable {
 	}
 
 	/**
-	 * The ID of the cast. Is the same ID with that of the Person in the cast.
+	 * The ID of the person.
 	 * 
-	 * @return The ID of the cast.
+	 * @return The ID of the person.
 	 */
 	public int getID() {
 		return ID;
 	}
 
 	/**
-	 * Sets the ID of the cast.
+	 * Sets the ID of the person.
 	 * 
 	 * @param iD
-	 *            The ID of the cast.
+	 *            The ID of the person.
 	 */
 	public void setID(int iD) {
 		ID = iD;
+	}
+
+	/**
+	 * The ID of the cast.
+	 * 
+	 * @return The ID of the cast.
+	 */
+	public int getCastID() {
+		return castID;
+	}
+
+	/**
+	 * Sets the ID of the cast.
+	 * 
+	 * @param castID
+	 *            The ID of the cast.
+	 */
+	public void setCastID(int castID) {
+		this.castID = castID;
 	}
 
 	/**
