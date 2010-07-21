@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -887,7 +889,11 @@ public class Movie implements Serializable {
 			JSONException {
 		Log.log("Performing a deep Movie search for \"" + name + "\"",
 				Verbosity.NORMAL);
-		name = name.replaceAll(" ", "%20");
+		try {
+			name = URLEncoder.encode(name, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			name = name.replaceAll(" ", "%20");
+		}
 		if (GeneralSettings.getApiKey() != null
 				&& !GeneralSettings.getApiKey().equals("")) {
 			if (name != null && !name.equals("")) {
@@ -955,7 +961,11 @@ public class Movie implements Serializable {
 			JSONException {
 		Log.log("Performing a Movie search for \"" + name + "\"",
 				Verbosity.NORMAL);
-		name = name.replaceAll(" ", "%20");
+		try {
+			name = URLEncoder.encode(name, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			name = name.replaceAll(" ", "%20");
+		}
 		if (GeneralSettings.getApiKey() != null
 				&& !GeneralSettings.getApiKey().equals("")) {
 			if (name != null && !name.equals("")) {
