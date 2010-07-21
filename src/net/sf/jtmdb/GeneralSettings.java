@@ -29,6 +29,10 @@ public class GeneralSettings {
 	 */
 	protected static final String MOVIE_GETINFO_URL = "Movie.getInfo/";
 	/**
+	 * The url of the API method for getting Movie version.
+	 */
+	protected static final String MOVIE_GETVERSION_URL = "Movie.getVersion/";
+	/**
 	 * The url of the API method for searching for Person.
 	 */
 	protected static final String PERSON_SEARCH_URL = "Person.search/";
@@ -36,6 +40,10 @@ public class GeneralSettings {
 	 * The url of the API method for getting Person info.
 	 */
 	protected static final String PERSON_GETINFO_URL = "Person.getInfo/";
+	/**
+	 * The url of the API method for getting Person version.
+	 */
+	protected static final String PERSON_GETVERSION_URL = "Person.getVersion/";
 	/**
 	 * The url of the API mode used.
 	 */

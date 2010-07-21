@@ -9,6 +9,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -1202,6 +1204,152 @@ public class Movie implements Serializable {
 				} else {
 					Log.log("Search for images of Movie with id " + ID
 							+ " returned no results", Verbosity.NORMAL);
+				}
+			} catch (IOException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			} catch (JSONException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			}
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the version information for a Movie by ID. Will return null if a
+	 * valid API key was not supplied to the {@link GeneralSettings} or if the
+	 * supplied ID did not correspond to a Movie.
+	 * 
+	 * @param ID
+	 *            The ID of the Movie to get the version for.
+	 * @return Version information of a Movie by ID.
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static MovieVersionInfo getVersion(int ID) throws IOException,
+			JSONException {
+		Log.log("Getting version for Movie with id " + ID, Verbosity.NORMAL);
+		if (GeneralSettings.getApiKey() != null
+				&& !GeneralSettings.getApiKey().equals("")) {
+			try {
+				URL call = new URL(GeneralSettings.BASE_URL
+						+ GeneralSettings.MOVIE_GETVERSION_URL
+						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.getApiKey() + "/" + ID);
+				URLConnection yc = call.openConnection();
+				BufferedReader in = new BufferedReader(new InputStreamReader(yc
+						.getInputStream()));
+				String inputLine;
+				StringBuffer jsonString = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					jsonString.append(inputLine);
+				}
+				in.close();
+				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					JSONArray jsonArray = new JSONArray(jsonString.toString());
+					JSONObject jsonObject = jsonArray.getJSONObject(0);
+					String name = jsonObject.getString("name");
+					int movieID = jsonObject.getInt("id");
+					int version = jsonObject.getInt("version");
+					Date lastModified = null;
+					try {
+						lastModified = new SimpleDateFormat(
+								"yyyy-MM-dd HH:mm:ss").parse(jsonObject
+								.getString("last_modified_at"));
+					} catch (ParseException e) {
+						Log.log(e, Verbosity.ERROR);
+					}
+					String imdbID = jsonObject.getString("imdb_id");
+					return new MovieVersionInfo(name, movieID, version,
+							lastModified, imdbID);
+				} else {
+					Log.log("Getting version for Movie with id " + ID
+							+ " returned no results", Verbosity.NORMAL);
+				}
+			} catch (IOException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			} catch (JSONException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			}
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the version information for a list of Movies by ID. Will return null
+	 * if a valid API key was not supplied to the {@link GeneralSettings} and
+	 * will skip any IDs that did not correspond to a Movie.
+	 * 
+	 * @param IDs
+	 *            The list of Movie IDs to get version information for.
+	 * @return Version information of a list of Movies by ID.
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static List<MovieVersionInfo> getVersion(int... IDs)
+			throws IOException, JSONException {
+		if (IDs == null || IDs.length == 0) {
+			Log.log("Provided empty or null list of IDs for Movie.getVersion",
+					Verbosity.ERROR);
+			return null;
+		}
+		StringBuffer listIDs = new StringBuffer();
+		for (int ID : IDs) {
+			listIDs.append("," + ID);
+		}
+		listIDs.delete(0, 1);
+		Log.log("Getting version for Movies with ids " + listIDs.toString(),
+				Verbosity.NORMAL);
+		if (GeneralSettings.getApiKey() != null
+				&& !GeneralSettings.getApiKey().equals("")) {
+			try {
+				URL call = new URL(GeneralSettings.BASE_URL
+						+ GeneralSettings.MOVIE_GETVERSION_URL
+						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.getApiKey() + "/" + listIDs);
+				URLConnection yc = call.openConnection();
+				BufferedReader in = new BufferedReader(new InputStreamReader(yc
+						.getInputStream()));
+				String inputLine;
+				StringBuffer jsonString = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					jsonString.append(inputLine);
+				}
+				in.close();
+				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					JSONArray jsonArray = new JSONArray(jsonString.toString());
+					List<MovieVersionInfo> versionInfo = new LinkedList<MovieVersionInfo>();
+					for (int i = 0; i < jsonArray.length(); i++) {
+						JSONObject jsonObject = jsonArray.getJSONObject(i);
+						String name = jsonObject.getString("name");
+						int movieID = jsonObject.getInt("id");
+						int version = jsonObject.getInt("version");
+						Date lastModified = null;
+						try {
+							lastModified = new SimpleDateFormat(
+									"yyyy-MM-dd HH:mm:ss").parse(jsonObject
+									.getString("last_modified_at"));
+						} catch (ParseException e) {
+							Log.log(e, Verbosity.ERROR);
+						}
+						String imdbID = jsonObject.getString("imdb_id");
+						versionInfo.add(new MovieVersionInfo(name, movieID,
+								version, lastModified, imdbID));
+					}
+					return versionInfo;
+				} else {
+					Log.log("Getting version for list of Movies with ids "
+							+ listIDs + " returned no results",
+							Verbosity.NORMAL);
 				}
 			} catch (IOException e) {
 				Log.log(e, Verbosity.ERROR);
