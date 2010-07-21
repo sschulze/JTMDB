@@ -89,6 +89,10 @@ public class Movie implements Serializable {
 	 * The type of the Movie.
 	 */
 	private String movieType;
+	/**
+	 * The json string that created this Movie object.
+	 */
+	private String jsonOrigin;
 
 	/**
 	 * Denotes whether the movie object is reduced.
@@ -272,6 +276,31 @@ public class Movie implements Serializable {
 	 */
 	public void setReduced(boolean isReduced) {
 		this.isReduced = isReduced;
+	}
+
+	/**
+	 * The json string that created this Movie object.
+	 * 
+	 * @return The json string that created this Movie object.
+	 */
+	public String getJsonOrigin() {
+		return jsonOrigin;
+	}
+
+	/**
+	 * The prettyprinted json string that created this Movie object.
+	 * 
+	 * @param indentFactor
+	 *            The number of spaces to add to each level of indentation.
+	 * @return The json string that created this Movie object.
+	 */
+	public String getJsonOrigin(int indentFactor) {
+		try {
+			return new JSONObject(jsonOrigin).toString(indentFactor);
+		} catch (JSONException e) {
+			Log.log(e, Verbosity.ERROR);
+			return null;
+		}
 	}
 
 	/**
@@ -1210,6 +1239,7 @@ public class Movie implements Serializable {
 	 */
 	public boolean parseJSON(JSONObject jsonObject) {
 		try {
+			jsonOrigin = jsonObject.toString();
 			setLanguage(jsonObject.getString("language"));
 			setMovieType(jsonObject.getString("movie_type"));
 			setTranslated(jsonObject.getBoolean("translated"));
@@ -1384,7 +1414,8 @@ public class Movie implements Serializable {
 					int castID = castObject.getInt("id");
 					String castDept = castObject.getString("department");
 					CastInfo castInfo = new CastInfo(castUrl, castName,
-							castCharacter, castJob, castID, castThumb, castDept);
+							castCharacter, castJob, castID, castThumb,
+							castDept, castObject.toString());
 					getCast().add(castInfo);
 				}
 				try {

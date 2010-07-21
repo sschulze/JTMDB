@@ -59,6 +59,10 @@ public class Person implements Serializable {
 	 * The popularity of the Person;
 	 */
 	private int popularity;
+	/**
+	 * The json string that created this Person object.
+	 */
+	private String jsonOrigin;
 
 	/**
 	 * Denotes whether the person object is reduced.
@@ -122,6 +126,31 @@ public class Person implements Serializable {
 		Log.log("Creating Person object from JSONArray", Verbosity.VERBOSE);
 		setReduced(isReduced);
 		parseJSON(jsonObjectInArray);
+	}
+
+	/**
+	 * The json string that created this Person object.
+	 * 
+	 * @return The json string that created this Person object.
+	 */
+	public String getJsonOrigin() {
+		return jsonOrigin;
+	}
+
+	/**
+	 * The prettyprinted json string that created this Person object.
+	 * 
+	 * @param indentFactor
+	 *            The number of spaces to add to each level of indentation.
+	 * @return The json string that created this Person object.
+	 */
+	public String getJsonOrigin(int indentFactor) {
+		try {
+			return new JSONObject(jsonOrigin).toString(indentFactor);
+		} catch (JSONException e) {
+			Log.log(e, Verbosity.ERROR);
+			return null;
+		}
 	}
 
 	/**
@@ -383,6 +412,7 @@ public class Person implements Serializable {
 	 */
 	public boolean parseJSON(JSONObject jsonObject) {
 		try {
+			jsonOrigin = jsonObject.toString();
 			setPopularity(jsonObject.getInt("popularity"));
 			setName(jsonObject.getString("name"));
 			try {
@@ -458,7 +488,8 @@ public class Person implements Serializable {
 					String filmDepartment = film.getString("department");
 					getFilmography().add(
 							new FilmographyInfo(filmName, filmCharacter,
-									filmUrl, filmID, filmJob, filmDepartment));
+									filmUrl, filmID, filmJob, filmDepartment,
+									film.toString()));
 				}
 			}
 		} catch (JSONException e) {

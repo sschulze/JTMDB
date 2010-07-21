@@ -5,6 +5,9 @@ import java.net.URL;
 
 import net.sf.jtmdb.Log.Verbosity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * This class represents an entry in the filmography list of a Person.
  * 
@@ -38,6 +41,10 @@ public class FilmographyInfo implements Serializable {
 	 * The department of the job for the Movie.
 	 */
 	private String department;
+	/**
+	 * The json string that created this FilmographyInfo object.
+	 */
+	private String jsonOrigin;
 
 	/**
 	 * Creates a new FilmographyInfo object.
@@ -54,14 +61,17 @@ public class FilmographyInfo implements Serializable {
 	 *            The job description in the Movie.
 	 * @param department
 	 *            The department of the job for the Movie.
+	 * @param jsonOrigin
+	 *            The json string that created this FilmographyInfo object.
 	 */
 	public FilmographyInfo(String name, String characterName, URL url, int ID,
-			String job, String department) {
+			String job, String department, String jsonOrigin) {
 		Log.log("Creating FilmographyInfo object with url: "
 				+ ((url == null) ? "NULL" : url.toString())
 				+ ",character name: " + characterName + ", job: " + job
 				+ "id: " + ID + ", department: " + department + " and name: "
 				+ name, Verbosity.VERBOSE);
+		this.jsonOrigin = jsonOrigin;
 		setName(name);
 		setCharacterName(characterName);
 		setUrl(url);
@@ -86,6 +96,31 @@ public class FilmographyInfo implements Serializable {
 	@Override
 	public int hashCode() {
 		return getID();
+	}
+
+	/**
+	 * The json string that created this FilmographyInfo object.
+	 * 
+	 * @return The json string that created this FilmographyInfo object.
+	 */
+	public String getJsonOrigin() {
+		return jsonOrigin;
+	}
+
+	/**
+	 * The prettyprinted json string that created this FilmographyInfo object.
+	 * 
+	 * @param indentFactor
+	 *            The number of spaces to add to each level of indentation.
+	 * @return The json string that created this FilmographyInfo object.
+	 */
+	public String getJsonOrigin(int indentFactor) {
+		try {
+			return new JSONObject(jsonOrigin).toString(indentFactor);
+		} catch (JSONException e) {
+			Log.log(e, Verbosity.ERROR);
+			return null;
+		}
 	}
 
 	/**

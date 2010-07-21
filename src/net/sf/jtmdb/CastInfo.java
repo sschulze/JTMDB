@@ -5,6 +5,9 @@ import java.net.URL;
 
 import net.sf.jtmdb.Log.Verbosity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * This class represents an entry in the cast list of a Movie. It contains info
  * about a member of cast and its ID is the same ID with that of the Person in
@@ -44,6 +47,10 @@ public class CastInfo implements Serializable {
 	 * The department of the job of the cast.
 	 */
 	private String department;
+	/**
+	 * The json string that created this CastInfo object.
+	 */
+	private String jsonOrigin;
 
 	/**
 	 * Constructs a new CastInfo object.
@@ -62,9 +69,11 @@ public class CastInfo implements Serializable {
 	 *            The thumbnail Url of the cast.
 	 * @param department
 	 *            The department of the job of the cast.
+	 * @param jsonOrigin
+	 *            The json string that created this CastInfo object.
 	 */
 	public CastInfo(URL url, String name, String characterName, String job,
-			int ID, URL thumb, String department) {
+			int ID, URL thumb, String department, String jsonOrigin) {
 		Log.log("Creating CastInfo object with url: "
 				+ ((url == null) ? "NULL" : url.toString())
 				+ ",character name: " + characterName + ", job: " + job
@@ -72,6 +81,7 @@ public class CastInfo implements Serializable {
 				+ ((thumb == null) ? "NULL" : thumb.toString())
 				+ ", department: " + department + " and name: " + name,
 				Verbosity.VERBOSE);
+		this.jsonOrigin = jsonOrigin;
 		setUrl(url);
 		setName(name);
 		setCharacterName(characterName);
@@ -97,6 +107,31 @@ public class CastInfo implements Serializable {
 	@Override
 	public int hashCode() {
 		return getID();
+	}
+
+	/**
+	 * The json string that created this CastInfo object.
+	 * 
+	 * @return The json string that created this CastInfo object.
+	 */
+	public String getJsonOrigin() {
+		return jsonOrigin;
+	}
+
+	/**
+	 * The prettyprinted json string that created this CastInfo object.
+	 * 
+	 * @param indentFactor
+	 *            The number of spaces to add to each level of indentation.
+	 * @return The json string that created this CastInfo object.
+	 */
+	public String getJsonOrigin(int indentFactor) {
+		try {
+			return new JSONObject(jsonOrigin).toString(indentFactor);
+		} catch (JSONException e) {
+			Log.log(e, Verbosity.ERROR);
+			return null;
+		}
 	}
 
 	/**
