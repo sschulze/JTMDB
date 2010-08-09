@@ -149,37 +149,25 @@ public class Movie implements Serializable {
 	private Set<Country> countries = new LinkedHashSet<Country>();
 
 	/**
-	 * Construct a movie object from a JSON object. The supplied boolean denotes
-	 * if the JSON object supplied contains reduced information about the Movie
-	 * (see class description {@link Movie}).
+	 * Construct a movie object from a JSON object.
 	 * 
 	 * @param jsonObject
 	 *            The JSON object describing the Movie.
-	 * @param isReduced
-	 *            If true, the JSON object contains reduced information (see
-	 *            class description {@link Movie}).
 	 */
-	public Movie(JSONObject jsonObject, boolean isReduced) {
+	public Movie(JSONObject jsonObject) {
 		Log.log("Creating Movie object from JSONObject", Verbosity.VERBOSE);
-		setReduced(isReduced);
 		parseJSON(jsonObject);
 	}
 
 	/**
 	 * Construct a movie object from a JSON array containing the JSON object
-	 * describing the Movie. The supplied boolean denotes if the JSON object
-	 * supplied contains reduced information about the Movie (see class
-	 * description).
+	 * describing the Movie.
 	 * 
 	 * @param jsonObjectInArray
 	 *            A JSON array containing the JSON object describing the Movie.
-	 * @param isReduced
-	 *            If true, the JSON object contains reduced information (see
-	 *            class description).
 	 */
-	public Movie(JSONArray jsonObjectInArray, boolean isReduced) {
+	public Movie(JSONArray jsonObjectInArray) {
 		Log.log("Creating Movie object from JSONArray", Verbosity.VERBOSE);
-		setReduced(isReduced);
 		parseJSON(jsonObjectInArray);
 	}
 
@@ -1020,8 +1008,7 @@ public class Movie implements Serializable {
 						JSONArray jsonArray = new JSONArray(jsonString
 								.toString());
 						for (int i = 0; i < jsonArray.length(); i++) {
-							results.add(new Movie(jsonArray.getJSONObject(i),
-									true));
+							results.add(new Movie(jsonArray.getJSONObject(i)));
 						}
 					} else {
 						Log.log("Search for \"" + name
@@ -1083,7 +1070,7 @@ public class Movie implements Serializable {
 				in.close();
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
-					return new Movie(jsonArray, false);
+					return new Movie(jsonArray);
 				} else {
 					Log.log("Getting info for Movie with id " + ID
 							+ " returned no results", Verbosity.NORMAL);
@@ -1483,7 +1470,9 @@ public class Movie implements Serializable {
 				setReleasedDate(c.getTime());
 			}
 
-			if (!isReduced()) {
+			setReduced(true);
+			if (jsonObject.has("genres")) {
+				setReduced(false);
 				JSONArray genresArray = jsonObject.getJSONArray("genres");
 				for (int i = 0; i < genresArray.length(); i++) {
 					JSONObject genreObject = genresArray.getJSONObject(i);

@@ -95,38 +95,26 @@ public class Person implements Serializable {
 	private Set<String> aka = new LinkedHashSet<String>();
 
 	/**
-	 * Construct a person object from a JSON object. The supplied boolean
-	 * denotes if the JSON object supplied contains reduced information about
-	 * the Person (see class description {@link Person}).
+	 * Construct a person object from a JSON object.
 	 * 
 	 * @param jsonObject
 	 *            The JSON object describing the Person.
-	 * @param isReduced
-	 *            If true, the JSON object contains reduced information (see
-	 *            class description {@link Person}).
 	 */
-	public Person(JSONObject jsonObject, boolean isReduced) {
+	public Person(JSONObject jsonObject) {
 		Log.log("Creating Person object from JSONObject", Verbosity.VERBOSE);
-		setReduced(isReduced);
 		parseJSON(jsonObject);
 	}
 
 	/**
 	 * 
 	 * Construct a person object from a JSON array containing the JSON object
-	 * describing the Person. The supplied boolean denotes if the JSON object
-	 * supplied contains reduced information about the Person (see class
-	 * description {@link Person}).
+	 * describing the Person.
 	 * 
 	 * @param jsonObjectInArray
 	 *            A JSON array containing the JSON object describing the Person.
-	 * @param isReduced
-	 *            If true, the JSON object contains reduced information (see
-	 *            class description {@link Person}).
 	 */
-	public Person(JSONArray jsonObjectInArray, boolean isReduced) {
+	public Person(JSONArray jsonObjectInArray) {
 		Log.log("Creating Person object from JSONArray", Verbosity.VERBOSE);
-		setReduced(isReduced);
 		parseJSON(jsonObjectInArray);
 	}
 
@@ -450,7 +438,9 @@ public class Person implements Serializable {
 				setProfile(prof);
 			}
 
-			if (!isReduced()) {
+			setReduced(true);
+			if (jsonObject.has("biography")) {
+				setReduced(false);
 				setBiography(jsonObject.getString("biography"));
 				setBirthPlace(jsonObject.getString("birthplace"));
 				setKnownMovies(jsonObject.getInt("known_movies"));
@@ -621,8 +611,7 @@ public class Person implements Serializable {
 						JSONArray jsonArray = new JSONArray(jsonString
 								.toString());
 						for (int i = 0; i < jsonArray.length(); i++) {
-							results.add(new Person(jsonArray.getJSONObject(i),
-									true));
+							results.add(new Person(jsonArray.getJSONObject(i)));
 						}
 					} else {
 						Log.log("Search for \"" + name
@@ -684,7 +673,7 @@ public class Person implements Serializable {
 				in.close();
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
-					return new Person(jsonArray, false);
+					return new Person(jsonArray);
 				} else {
 					Log.log("Getting info for Person with ID " + ID
 							+ " returned no results", Verbosity.NORMAL);
