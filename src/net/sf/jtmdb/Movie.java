@@ -37,7 +37,7 @@ import org.json.JSONObject;
  */
 public class Movie implements Serializable {
 
-	private static final long serialVersionUID = 7435655822360707549L;
+	private static final long serialVersionUID = -8400316647420283258L;
 
 	/**
 	 * The name of the movie.
@@ -95,6 +95,10 @@ public class Movie implements Serializable {
 	 * The json string that created this Movie object.
 	 */
 	private String jsonOrigin;
+	/**
+	 * The movie certification.
+	 */
+	private String certification;
 
 	/**
 	 * Denotes whether the movie object is reduced.
@@ -107,10 +111,6 @@ public class Movie implements Serializable {
 	 * The movie tagline. Not present in reduced form.
 	 */
 	private String tagline;
-	/**
-	 * The movie certification. Not present in reduced form.
-	 */
-	private String certification;
 	/**
 	 * The movie runtime. Not present in reduced form.
 	 */
@@ -323,11 +323,9 @@ public class Movie implements Serializable {
 	}
 
 	/**
-	 * The Movie certification. Not present in reduced form (see class
-	 * description {@link Movie} and method {@link #isReduced()}).
+	 * The Movie certification.
 	 * 
-	 * @return The Movie certification. Not present in reduced form (see class
-	 *         description {@link Movie} and method {@link #isReduced()}).
+	 * @return The Movie certification.
 	 */
 	public String getCertification() {
 		return certification;
@@ -1352,6 +1350,178 @@ public class Movie implements Serializable {
 	}
 
 	/**
+	 * Gets the version information for the last Movie in the database. Will
+	 * return null if a valid API key was not supplied to the
+	 * {@link GeneralSettings}.
+	 * 
+	 * @return Version information for the last Movie in the database.
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static MovieVersionInfo getLatest() throws IOException,
+			JSONException {
+		Log.log("Getting latest Movie", Verbosity.NORMAL);
+		if (GeneralSettings.getApiKey() != null
+				&& !GeneralSettings.getApiKey().equals("")) {
+			try {
+				URL call = new URL(GeneralSettings.BASE_URL
+						+ GeneralSettings.MOVIE_GETLATEST_URL
+						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.getApiKey());
+				URLConnection yc = call.openConnection();
+				BufferedReader in = new BufferedReader(new InputStreamReader(yc
+						.getInputStream()));
+				String inputLine;
+				StringBuffer jsonString = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					jsonString.append(inputLine);
+				}
+				in.close();
+				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					JSONArray jsonArray = new JSONArray(jsonString.toString());
+					JSONObject jsonObject = jsonArray.getJSONObject(0);
+					String name = jsonObject.getString("name");
+					int movieID = jsonObject.getInt("id");
+					int version = jsonObject.getInt("version");
+					Date lastModified = null;
+					try {
+						lastModified = new SimpleDateFormat(
+								"yyyy-MM-dd HH:mm:ss").parse(jsonObject
+								.getString("last_modified_at"));
+					} catch (ParseException e) {
+						Log.log(e, Verbosity.ERROR);
+					}
+					String imdbID = jsonObject.getString("imdb_id");
+					return new MovieVersionInfo(name, movieID, version,
+							lastModified, imdbID);
+				} else {
+					Log.log("Getting latest Movie entry returned no results",
+							Verbosity.NORMAL);
+				}
+			} catch (IOException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			} catch (JSONException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			}
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the translations for a specific Movie (by ID). Returns a Pair of
+	 * objects. The first object is the MovieVersionInfo of the Movie and the
+	 * second is a list of Translation objects. Will return null if a valid API
+	 * key was not supplied to the {@link GeneralSettings} or if the supplied ID
+	 * did not correspond to a Movie.
+	 * 
+	 * @param ID
+	 *            The ID of the Movie.
+	 * @return A Pair of objects. The first object is the MovieVersionInfo of
+	 *         the Movie and the second is a list of Translation objects. Will
+	 *         return null if a valid API key was not supplied to the
+	 *         {@link GeneralSettings} or if the supplied ID did not correspond
+	 *         to a Movie.
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static Pair<MovieVersionInfo, List<Translation>> getTranslations(
+			int ID) throws IOException, JSONException {
+		return getTranslations("" + ID);
+	}
+
+	/**
+	 * Gets the translations for a specific Movie (by ID). Returns a Pair of
+	 * objects. The first object is the MovieVersionInfo of the Movie and the
+	 * second is a list of Translation objects. Will return null if a valid API
+	 * key was not supplied to the {@link GeneralSettings} or if the supplied ID
+	 * did not correspond to a Movie.
+	 * 
+	 * @param imdbID
+	 *            The Imdb ID of the Movie.
+	 * @return A Pair of objects. The first object is the MovieVersionInfo of
+	 *         the Movie and the second is a list of Translation objects. Will
+	 *         return null if a valid API key was not supplied to the
+	 *         {@link GeneralSettings} or if the supplied ID did not correspond
+	 *         to a Movie.
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static Pair<MovieVersionInfo, List<Translation>> getTranslations(
+			String imdbID) throws IOException, JSONException {
+		Log.log("Getting translations for Movie with id " + imdbID,
+				Verbosity.NORMAL);
+		if (GeneralSettings.getApiKey() != null
+				&& !GeneralSettings.getApiKey().equals("")) {
+			try {
+				URL call = new URL(GeneralSettings.BASE_URL
+						+ GeneralSettings.MOVIE_GETTRANSLATIONS_URL
+						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.getApiKey() + "/" + imdbID);
+				URLConnection yc = call.openConnection();
+				BufferedReader in = new BufferedReader(new InputStreamReader(yc
+						.getInputStream()));
+				String inputLine;
+				StringBuffer jsonString = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					jsonString.append(inputLine);
+				}
+				in.close();
+				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					JSONArray jsonArray = new JSONArray(jsonString.toString());
+					JSONObject jsonObject = jsonArray.getJSONObject(0);
+					String name = jsonObject.getString("name");
+					int movieID = jsonObject.getInt("id");
+					int version = jsonObject.getInt("version");
+					Date lastModified = null;
+					try {
+						lastModified = new SimpleDateFormat(
+								"yyyy-MM-dd HH:mm:ss").parse(jsonObject
+								.getString("last_modified_at"));
+					} catch (ParseException e) {
+						Log.log(e, Verbosity.ERROR);
+					}
+					String imdbIDTmp = jsonObject.getString("imdb_id");
+					MovieVersionInfo versionInfo = new MovieVersionInfo(name,
+							movieID, version, lastModified, imdbIDTmp);
+					JSONArray translations = jsonObject
+							.getJSONArray("translations");
+					List<Translation> translationsList = new LinkedList<Translation>();
+					for (int i = 0; i < translations.length(); i++) {
+						JSONObject translation = translations.getJSONObject(i);
+						String englishName = translation
+								.getString("english_name");
+						String nativeName = translation
+								.getString("native_name");
+						String iso639_1 = translation.getString("iso_639_1");
+						translationsList.add(new Translation(englishName,
+								nativeName, iso639_1));
+					}
+					return new Pair<MovieVersionInfo, List<Translation>>(
+							versionInfo, translationsList);
+				} else {
+					Log.log("Getting translations for Movie with id " + imdbID
+							+ " returned no results", Verbosity.NORMAL);
+				}
+			} catch (IOException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			} catch (JSONException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			}
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
+		}
+		return null;
+	}
+
+	/**
 	 * Parses a JSON object wrapped in a JSON array and sets the Movie fields.
 	 * 
 	 * @param jsonArray
@@ -1469,6 +1639,7 @@ public class Movie implements Serializable {
 				}
 				setReleasedDate(c.getTime());
 			}
+			setCertification(jsonObject.getString("certification"));
 
 			setReduced(true);
 			if (jsonObject.has("genres")) {
@@ -1483,7 +1654,8 @@ public class Movie implements Serializable {
 					} catch (MalformedURLException e) {
 						Log.log(e, Verbosity.ERROR);
 					}
-					getGenres().add(new Genre(genreUrl, genreName));
+					int genreID = jsonObject.getInt("id");
+					getGenres().add(new Genre(genreUrl, genreName, genreID));
 				}
 				JSONArray studiosArray = jsonObject.getJSONArray("studios");
 				for (int i = 0; i < studiosArray.length(); i++) {
@@ -1512,7 +1684,6 @@ public class Movie implements Serializable {
 							new Country(countryUrl, countryName, countryCode));
 				}
 				setTagline(jsonObject.getString("tagline"));
-				setCertification(jsonObject.getString("certification"));
 				try {
 					setTrailer(new URL(jsonObject.getString("trailer")));
 				} catch (MalformedURLException e) {
@@ -1574,4 +1745,64 @@ public class Movie implements Serializable {
 		return false;
 	}
 
+	/**
+	 * Browses for movies. The object passed to this method contains settings
+	 * that govern which Movies get returned. Returns a list of Movie objects
+	 * with the reduced form (see class description {@link Movie} and method
+	 * {@link #isReduced()}). Will return null if a valid API key was not
+	 * supplied to the {@link GeneralSettings}
+	 * 
+	 * @param options
+	 *            The settings that govern which Movies get returned.
+	 * @return A list of Movie objects with the reduced form (see class
+	 *         description {@link Movie} and method {@link #isReduced()}).Will
+	 *         return null if a valid API key was not supplied to the
+	 *         {@link GeneralSettings}
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static List<Movie> browse(BrowseOptions options) throws IOException,
+			JSONException {
+		Log.log("Browsing for Movies", Verbosity.NORMAL);
+		if (GeneralSettings.getApiKey() != null
+				&& !GeneralSettings.getApiKey().equals("")) {
+			try {
+				URL call = new URL(GeneralSettings.BASE_URL
+						+ GeneralSettings.MOVIE_BROWSE_URL
+						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.getApiKey() + "?"
+						+ options.buildQuery());
+				URLConnection yc = call.openConnection();
+				BufferedReader in = new BufferedReader(new InputStreamReader(yc
+						.getInputStream()));
+				String inputLine;
+				StringBuffer jsonString = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					jsonString.append(inputLine);
+				}
+				in.close();
+				List<Movie> results = new LinkedList<Movie>();
+				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					JSONArray jsonArray = new JSONArray(jsonString.toString());
+					for (int i = 0; i < jsonArray.length(); i++) {
+						results.add(new Movie(jsonArray.getJSONObject(i)));
+					}
+					return results;
+				} else {
+					Log.log("Browsing for Movies returned no results",
+							Verbosity.NORMAL);
+				}
+			} catch (IOException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			} catch (JSONException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			}
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
+		}
+		return null;
+	}
 }

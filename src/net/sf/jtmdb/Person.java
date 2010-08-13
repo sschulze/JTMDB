@@ -35,7 +35,7 @@ import org.json.JSONObject;
  */
 public class Person implements Serializable {
 
-	private static final long serialVersionUID = -6310264485167208111L;
+	private static final long serialVersionUID = -6402903044946593378L;
 
 	/**
 	 * The name of the person.
@@ -835,4 +835,66 @@ public class Person implements Serializable {
 		return null;
 	}
 
+	/**
+	 * Gets the version information for the last Person in the database. Will
+	 * return null if a valid API key was not supplied to the
+	 * {@link GeneralSettings} or if the supplied ID did not correspond to a
+	 * Person.
+	 * 
+	 * @return Version information for the last Person in the database.
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static PersonVersionInfo getLatest() throws IOException,
+			JSONException {
+		Log.log("Getting latest Person", Verbosity.NORMAL);
+		if (GeneralSettings.getApiKey() != null
+				&& !GeneralSettings.getApiKey().equals("")) {
+			try {
+				URL call = new URL(GeneralSettings.BASE_URL
+						+ GeneralSettings.PERSON_GETLATEST_URL
+						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.getApiKey());
+				URLConnection yc = call.openConnection();
+				BufferedReader in = new BufferedReader(new InputStreamReader(yc
+						.getInputStream()));
+				String inputLine;
+				StringBuffer jsonString = new StringBuffer();
+				while ((inputLine = in.readLine()) != null) {
+					jsonString.append(inputLine);
+				}
+				in.close();
+				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					JSONArray jsonArray = new JSONArray(jsonString.toString());
+					JSONObject jsonObject = jsonArray.getJSONObject(0);
+					String name = jsonObject.getString("name");
+					int movieID = jsonObject.getInt("id");
+					int version = jsonObject.getInt("version");
+					Date lastModified = null;
+					try {
+						lastModified = new SimpleDateFormat(
+								"yyyy-MM-dd HH:mm:ss").parse(jsonObject
+								.getString("last_modified_at"));
+					} catch (ParseException e) {
+						Log.log(e, Verbosity.ERROR);
+					}
+					return new PersonVersionInfo(name, movieID, version,
+							lastModified);
+				} else {
+					Log.log("Getting latest Person entry returned no results",
+							Verbosity.NORMAL);
+				}
+			} catch (IOException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			} catch (JSONException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			}
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
+		}
+		return null;
+	}
 }

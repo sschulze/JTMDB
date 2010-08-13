@@ -33,6 +33,18 @@ public class GeneralSettings {
 	 */
 	protected static final String MOVIE_GETVERSION_URL = "Movie.getVersion/";
 	/**
+	 * The url of the API method for getting the latest Movie entry.
+	 */
+	protected static final String MOVIE_GETLATEST_URL = "Movie.getLatest/";
+	/**
+	 * The url of the API method for getting the translations of a Movie.
+	 */
+	protected static final String MOVIE_GETTRANSLATIONS_URL = "Movie.getTranslations/";
+	/**
+	 * The url of the API method for browsing for Movies.
+	 */
+	protected static final String MOVIE_BROWSE_URL = "Movie.browse/";
+	/**
 	 * The url of the API method for searching for Person.
 	 */
 	protected static final String PERSON_SEARCH_URL = "Person.search/";
@@ -44,6 +56,14 @@ public class GeneralSettings {
 	 * The url of the API method for getting Person version.
 	 */
 	protected static final String PERSON_GETVERSION_URL = "Person.getVersion/";
+	/**
+	 * The url of the API method for getting the latest Person entry.
+	 */
+	protected static final String PERSON_GETLATEST_URL = "Person.getLatest/";
+	/**
+	 * The url of the API method for getting the list of Genres.
+	 */
+	protected static final String GENRES_GETLIST_URL = "Genres.getList/";
 	/**
 	 * The url of the API mode used.
 	 */
