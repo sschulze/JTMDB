@@ -160,6 +160,10 @@ public class BrowseOptions implements Serializable {
 	 * The countries of the search.
 	 */
 	private Set<String> countries = null;
+	/**
+	 * The minimum amount of votes a Movie must have to appear in the results.
+	 */
+	private Integer minVotes = null;
 
 	/**
 	 * Gets the type of the ordering of the results. Default is
@@ -816,6 +820,39 @@ public class BrowseOptions implements Serializable {
 	}
 
 	/**
+	 * Clears the minimum amount of votes from the search.
+	 */
+	public void clearMinVotes() {
+		this.minVotes = null;
+	}
+
+	/**
+	 * Gets the minimum amount of votes a Movie must have to appear in the
+	 * results.
+	 * 
+	 * @return The minimum amount of votes a Movie must have to appear in the
+	 *         results.
+	 */
+	public Integer getMinVotes() {
+		return minVotes;
+	}
+
+	/**
+	 * Sets the minimum amount of votes a Movie must have in order to appear in
+	 * the results. Must be greater or equal to 0.
+	 * 
+	 * @param minVotes
+	 *            The minimum amount of votes a Movie must have in order to
+	 *            appear in the results. Must be greater or equal to 0.
+	 */
+	public void setMinVotes(int minVotes) {
+		if (minVotes < 0) {
+			return;
+		}
+		this.minVotes = minVotes;
+	}
+
+	/**
 	 * Builds the query to be appended to the call to the server.
 	 * 
 	 * @return The query to be appended to the call to the server.
@@ -876,6 +913,8 @@ public class BrowseOptions implements Serializable {
 			}
 			buffer.deleteCharAt(buffer.length() - 1);
 		}
+		buffer.append((getMinVotes() == null) ? "" : "&min_votes="
+				+ getMinVotes());
 		return buffer.toString();
 	}
 }

@@ -758,9 +758,8 @@ public class Movie implements Serializable {
 		Log.log("Requesting the box office from the site.", Verbosity.NORMAL);
 		Set<Integer> ids = parseHTML(0);
 
-		List<Movie> movies = null;
+		List<Movie> movies = new LinkedList<Movie>();
 		if (!ids.isEmpty()) {
-			movies = new LinkedList<Movie>();
 			for (int id : ids.toArray(new Integer[0])) {
 				movies.add(getInfo(id));
 			}
@@ -810,9 +809,8 @@ public class Movie implements Serializable {
 				Verbosity.NORMAL);
 		Set<Integer> ids = parseHTML(1);
 
-		List<Movie> movies = null;
+		List<Movie> movies = new LinkedList<Movie>();
 		if (!ids.isEmpty()) {
-			movies = new LinkedList<Movie>();
 			for (int id : ids.toArray(new Integer[0])) {
 				movies.add(getInfo(id));
 			}
@@ -1310,9 +1308,9 @@ public class Movie implements Serializable {
 					jsonString.append(inputLine);
 				}
 				in.close();
+				List<MovieVersionInfo> versionInfo = new LinkedList<MovieVersionInfo>();
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
-					List<MovieVersionInfo> versionInfo = new LinkedList<MovieVersionInfo>();
 					for (int i = 0; i < jsonArray.length(); i++) {
 						JSONObject jsonObject = jsonArray.getJSONObject(i);
 						String name = jsonObject.getString("name");
@@ -1330,12 +1328,12 @@ public class Movie implements Serializable {
 						versionInfo.add(new MovieVersionInfo(name, movieID,
 								version, lastModified, imdbID));
 					}
-					return versionInfo;
 				} else {
 					Log.log("Getting version for list of Movies with ids "
 							+ listIDs + " returned no results",
 							Verbosity.NORMAL);
 				}
+				return versionInfo;
 			} catch (IOException e) {
 				Log.log(e, Verbosity.ERROR);
 				throw e;
@@ -1788,11 +1786,11 @@ public class Movie implements Serializable {
 					for (int i = 0; i < jsonArray.length(); i++) {
 						results.add(new Movie(jsonArray.getJSONObject(i)));
 					}
-					return results;
 				} else {
 					Log.log("Browsing for Movies returned no results",
 							Verbosity.NORMAL);
 				}
+				return results;
 			} catch (IOException e) {
 				Log.log(e, Verbosity.ERROR);
 				throw e;
