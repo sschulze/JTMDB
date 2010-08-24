@@ -99,6 +99,14 @@ public class Movie implements Serializable {
 	 * The movie certification.
 	 */
 	private String certification;
+	/**
+	 * The version of the Movie.
+	 */
+	private int version;
+	/**
+	 * The votes for this Movie.
+	 */
+	private int votes;
 
 	/**
 	 * Denotes whether the movie object is reduced.
@@ -419,6 +427,24 @@ public class Movie implements Serializable {
 	}
 
 	/**
+	 * The version of the Movie.
+	 * 
+	 * @return The version of the Movie.
+	 */
+	public int getVersion() {
+		return version;
+	}
+
+	/**
+	 * The votes of the Movie.
+	 * 
+	 * @return The votes of the Movie.
+	 */
+	public int getVotes() {
+		return votes;
+	}
+
+	/**
 	 * The Movie runtime. Not present in reduced form (see class description
 	 * {@link Movie} and method {@link #isReduced()}).
 	 * 
@@ -652,6 +678,26 @@ public class Movie implements Serializable {
 	public void setCast(Set<CastInfo> cast) {
 		this.cast.clear();
 		this.cast.addAll(cast);
+	}
+
+	/**
+	 * Sets the version of the Movie.
+	 * 
+	 * @param version
+	 *            The version of the Movie.
+	 */
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
+	/**
+	 * Sets the votes of the Movie.
+	 * 
+	 * @param votes
+	 *            The votes of the Movie.
+	 */
+	public void setVotes(int votes) {
+		this.votes = votes;
 	}
 
 	/**
@@ -1638,6 +1684,8 @@ public class Movie implements Serializable {
 				setReleasedDate(c.getTime());
 			}
 			setCertification(jsonObject.getString("certification"));
+			setVersion(jsonObject.getInt("version"));
+			setVotes(jsonObject.getInt("votes"));
 
 			setReduced(true);
 			if (jsonObject.has("genres")) {
