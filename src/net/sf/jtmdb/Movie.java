@@ -44,6 +44,10 @@ public class Movie implements Serializable {
 	 */
 	private String name;
 	/**
+	 * The original name for the movie.
+	 */
+	private String originalName;
+	/**
 	 * The alternative name for the movie.
 	 */
 	private String alternativeName;
@@ -320,6 +324,15 @@ public class Movie implements Serializable {
 	}
 
 	/**
+	 * The Movie original name.
+	 * 
+	 * @return The Movie original name.
+	 */
+	public String getOriginalName() {
+		return originalName;
+	}
+
+	/**
 	 * The Movie tagline. Not present in reduced form (see class description
 	 * {@link Movie} and method {@link #isReduced()}).
 	 * 
@@ -537,6 +550,16 @@ public class Movie implements Serializable {
 	 */
 	public void setAlternativeName(String alternativeName) {
 		this.alternativeName = alternativeName;
+	}
+
+	/**
+	 * Sets the original name of the Movie.
+	 * 
+	 * @param originalName
+	 *            The original name of the Movie.
+	 */
+	public void setOriginalName(String originalName) {
+		this.originalName = originalName;
 	}
 
 	/**
@@ -1595,6 +1618,7 @@ public class Movie implements Serializable {
 			setAdult(jsonObject.getBoolean("adult"));
 			setRating(jsonObject.getDouble("rating"));
 			setAlternativeName(jsonObject.getString("alternative_name"));
+			setOriginalName(jsonObject.getString("original_name"));
 			setName(jsonObject.getString("name"));
 			setOverview(jsonObject.getString("overview"));
 			setID(jsonObject.getInt("id"));
