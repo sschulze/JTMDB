@@ -1,15 +1,13 @@
 package net.sf.jtmdb;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import net.sf.jtmdb.GeneralSettings.Utilities;
 import net.sf.jtmdb.Log.Verbosity;
 
 import org.json.JSONArray;
@@ -155,15 +153,7 @@ public class Genre implements Serializable {
 						+ GeneralSettings.getAPILanguage() + "/"
 						+ GeneralSettings.API_MODE_URL
 						+ GeneralSettings.getApiKey());
-				URLConnection yc = call.openConnection();
-				BufferedReader in = new BufferedReader(new InputStreamReader(yc
-						.getInputStream()));
-				String inputLine;
-				StringBuffer jsonString = new StringBuffer();
-				while ((inputLine = in.readLine()) != null) {
-					jsonString.append(inputLine);
-				}
-				in.close();
+				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					JSONObject jsonObject = jsonArray.getJSONObject(0);

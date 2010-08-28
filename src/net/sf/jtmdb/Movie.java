@@ -1,13 +1,10 @@
 package net.sf.jtmdb;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +17,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.jtmdb.GeneralSettings.Utilities;
 import net.sf.jtmdb.Log.Verbosity;
 
 import org.json.JSONArray;
@@ -922,15 +920,7 @@ public class Movie implements Serializable {
 		Set<Integer> ids = new LinkedHashSet<Integer>();
 		try {
 			URL call = new URL(GeneralSettings.HOMEPAGE_URL);
-			URLConnection yc = call.openConnection();
-			BufferedReader in = new BufferedReader(new InputStreamReader(yc
-					.getInputStream()));
-			String inputLine;
-			StringBuffer xmlString = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				xmlString.append(inputLine);
-			}
-			in.close();
+			String xmlString = Utilities.readUrlResponse(call);
 
 			String[] parts = xmlString.toString().split("first most-popular");
 
@@ -987,15 +977,7 @@ public class Movie implements Serializable {
 							+ GeneralSettings.getAPILanguage() + "/"
 							+ GeneralSettings.API_MODE_URL
 							+ GeneralSettings.getApiKey() + "/" + name);
-					URLConnection yc = call.openConnection();
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(yc.getInputStream()));
-					String inputLine;
-					StringBuffer jsonString = new StringBuffer();
-					while ((inputLine = in.readLine()) != null) {
-						jsonString.append(inputLine);
-					}
-					in.close();
+					String jsonString = Utilities.readUrlResponse(call);
 					List<Movie> results = new LinkedList<Movie>();
 					if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 						JSONArray jsonArray = new JSONArray(jsonString
@@ -1059,15 +1041,7 @@ public class Movie implements Serializable {
 							+ GeneralSettings.getAPILanguage() + "/"
 							+ GeneralSettings.API_MODE_URL
 							+ GeneralSettings.getApiKey() + "/" + name);
-					URLConnection yc = call.openConnection();
-					BufferedReader in = new BufferedReader(
-							new InputStreamReader(yc.getInputStream()));
-					String inputLine;
-					StringBuffer jsonString = new StringBuffer();
-					while ((inputLine = in.readLine()) != null) {
-						jsonString.append(inputLine);
-					}
-					in.close();
+					String jsonString = Utilities.readUrlResponse(call);
 					List<Movie> results = new LinkedList<Movie>();
 					if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 						JSONArray jsonArray = new JSONArray(jsonString
@@ -1124,15 +1098,7 @@ public class Movie implements Serializable {
 						+ GeneralSettings.getAPILanguage() + "/"
 						+ GeneralSettings.API_MODE_URL
 						+ GeneralSettings.getApiKey() + "/" + ID);
-				URLConnection yc = call.openConnection();
-				BufferedReader in = new BufferedReader(new InputStreamReader(yc
-						.getInputStream()));
-				String inputLine;
-				StringBuffer jsonString = new StringBuffer();
-				while ((inputLine = in.readLine()) != null) {
-					jsonString.append(inputLine);
-				}
-				in.close();
+				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					return new Movie(jsonArray);
@@ -1177,15 +1143,7 @@ public class Movie implements Serializable {
 						+ GeneralSettings.getAPILanguage() + "/"
 						+ GeneralSettings.API_MODE_URL
 						+ GeneralSettings.getApiKey() + "/" + ID);
-				URLConnection yc = call.openConnection();
-				BufferedReader in = new BufferedReader(new InputStreamReader(yc
-						.getInputStream()));
-				String inputLine;
-				StringBuffer jsonString = new StringBuffer();
-				while ((inputLine = in.readLine()) != null) {
-					jsonString.append(inputLine);
-				}
-				in.close();
+				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 					JSONObject json = new JSONArray(jsonString.toString())
 							.getJSONObject(0);
@@ -1292,15 +1250,7 @@ public class Movie implements Serializable {
 						+ GeneralSettings.getAPILanguage() + "/"
 						+ GeneralSettings.API_MODE_URL
 						+ GeneralSettings.getApiKey() + "/" + ID);
-				URLConnection yc = call.openConnection();
-				BufferedReader in = new BufferedReader(new InputStreamReader(yc
-						.getInputStream()));
-				String inputLine;
-				StringBuffer jsonString = new StringBuffer();
-				while ((inputLine = in.readLine()) != null) {
-					jsonString.append(inputLine);
-				}
-				in.close();
+				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					JSONObject jsonObject = jsonArray.getJSONObject(0);
@@ -1368,15 +1318,7 @@ public class Movie implements Serializable {
 						+ GeneralSettings.getAPILanguage() + "/"
 						+ GeneralSettings.API_MODE_URL
 						+ GeneralSettings.getApiKey() + "/" + listIDs);
-				URLConnection yc = call.openConnection();
-				BufferedReader in = new BufferedReader(new InputStreamReader(yc
-						.getInputStream()));
-				String inputLine;
-				StringBuffer jsonString = new StringBuffer();
-				while ((inputLine = in.readLine()) != null) {
-					jsonString.append(inputLine);
-				}
-				in.close();
+				String jsonString = Utilities.readUrlResponse(call);
 				List<MovieVersionInfo> versionInfo = new LinkedList<MovieVersionInfo>();
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
@@ -1436,15 +1378,7 @@ public class Movie implements Serializable {
 						+ GeneralSettings.getAPILanguage() + "/"
 						+ GeneralSettings.API_MODE_URL
 						+ GeneralSettings.getApiKey());
-				URLConnection yc = call.openConnection();
-				BufferedReader in = new BufferedReader(new InputStreamReader(yc
-						.getInputStream()));
-				String inputLine;
-				StringBuffer jsonString = new StringBuffer();
-				while ((inputLine = in.readLine()) != null) {
-					jsonString.append(inputLine);
-				}
-				in.close();
+				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					JSONObject jsonObject = jsonArray.getJSONObject(0);
@@ -1530,15 +1464,7 @@ public class Movie implements Serializable {
 						+ GeneralSettings.getAPILanguage() + "/"
 						+ GeneralSettings.API_MODE_URL
 						+ GeneralSettings.getApiKey() + "/" + imdbID);
-				URLConnection yc = call.openConnection();
-				BufferedReader in = new BufferedReader(new InputStreamReader(yc
-						.getInputStream()));
-				String inputLine;
-				StringBuffer jsonString = new StringBuffer();
-				while ((inputLine = in.readLine()) != null) {
-					jsonString.append(inputLine);
-				}
-				in.close();
+				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					JSONObject jsonObject = jsonArray.getJSONObject(0);
@@ -1843,15 +1769,7 @@ public class Movie implements Serializable {
 						+ GeneralSettings.API_MODE_URL
 						+ GeneralSettings.getApiKey() + "?"
 						+ options.buildQuery());
-				URLConnection yc = call.openConnection();
-				BufferedReader in = new BufferedReader(new InputStreamReader(yc
-						.getInputStream()));
-				String inputLine;
-				StringBuffer jsonString = new StringBuffer();
-				while ((inputLine = in.readLine()) != null) {
-					jsonString.append(inputLine);
-				}
-				in.close();
+				String jsonString = Utilities.readUrlResponse(call);
 				List<Movie> results = new LinkedList<Movie>();
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());

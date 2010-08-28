@@ -1,8 +1,13 @@
 package net.sf.jtmdb;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * This class contains general settings for the library (the API key for
@@ -64,6 +69,14 @@ public class GeneralSettings {
 	 * The url of the API method for getting the list of Genres.
 	 */
 	protected static final String GENRES_GETLIST_URL = "Genres.getList/";
+	/**
+	 * The url of the API method for getting the token for authentication.
+	 */
+	protected static final String AUTH_TOKEN_URL = "Auth.getToken/";
+	/**
+	 * The url of the API method for getting the session from a token.
+	 */
+	protected static final String AUTH_SESSION_URL = "Auth.getSession/";
 	/**
 	 * The url of the API mode used.
 	 */
@@ -208,6 +221,41 @@ public class GeneralSettings {
 	 */
 	public static String getAPILanguage() {
 		return APILanguage;
+	}
+
+	/**
+	 * This class provides usefull utilities.
+	 * 
+	 * @author Savvas Dalkitsis
+	 */
+	protected static class Utilities {
+
+		private Utilities() {
+
+		}
+
+		/**
+		 * This method will open a connection to the provided url and return its
+		 * response.
+		 * 
+		 * @param url
+		 *            The url to open a connection to.
+		 * @return The respone.
+		 * @throws IOException
+		 */
+		public static String readUrlResponse(URL url) throws IOException {
+			URLConnection yc = url.openConnection();
+			BufferedReader in = new BufferedReader(new InputStreamReader(yc
+					.getInputStream()));
+			String inputLine;
+			StringBuffer jsonString = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				jsonString.append(inputLine);
+			}
+			in.close();
+			return jsonString.toString();
+		}
+
 	}
 
 }
