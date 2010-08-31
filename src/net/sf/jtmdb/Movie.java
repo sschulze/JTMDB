@@ -35,7 +35,7 @@ import org.json.JSONObject;
  */
 public class Movie implements Serializable {
 
-	private static final long serialVersionUID = -8400316647420283258L;
+	private static final long serialVersionUID = -3604171134163230639L;
 
 	/**
 	 * The name of the movie.
@@ -975,7 +975,7 @@ public class Movie implements Serializable {
 					URL call = new URL(GeneralSettings.BASE_URL
 							+ GeneralSettings.MOVIE_SEARCH_URL
 							+ GeneralSettings.getAPILanguage() + "/"
-							+ GeneralSettings.API_MODE_URL
+							+ GeneralSettings.API_MODE_URL + "/"
 							+ GeneralSettings.getApiKey() + "/" + name);
 					String jsonString = Utilities.readUrlResponse(call);
 					List<Movie> results = new LinkedList<Movie>();
@@ -1039,7 +1039,7 @@ public class Movie implements Serializable {
 					URL call = new URL(GeneralSettings.BASE_URL
 							+ GeneralSettings.MOVIE_SEARCH_URL
 							+ GeneralSettings.getAPILanguage() + "/"
-							+ GeneralSettings.API_MODE_URL
+							+ GeneralSettings.API_MODE_URL + "/"
 							+ GeneralSettings.getApiKey() + "/" + name);
 					String jsonString = Utilities.readUrlResponse(call);
 					List<Movie> results = new LinkedList<Movie>();
@@ -1096,7 +1096,7 @@ public class Movie implements Serializable {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_GETINFO_URL
 						+ GeneralSettings.getAPILanguage() + "/"
-						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + ID);
 				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
@@ -1141,7 +1141,7 @@ public class Movie implements Serializable {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_GETIMAGES_URL
 						+ GeneralSettings.getAPILanguage() + "/"
-						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + ID);
 				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
@@ -1248,7 +1248,7 @@ public class Movie implements Serializable {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_GETVERSION_URL
 						+ GeneralSettings.getAPILanguage() + "/"
-						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + ID);
 				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
@@ -1316,7 +1316,7 @@ public class Movie implements Serializable {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_GETVERSION_URL
 						+ GeneralSettings.getAPILanguage() + "/"
-						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + listIDs);
 				String jsonString = Utilities.readUrlResponse(call);
 				List<MovieVersionInfo> versionInfo = new LinkedList<MovieVersionInfo>();
@@ -1376,7 +1376,7 @@ public class Movie implements Serializable {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_GETLATEST_URL
 						+ GeneralSettings.getAPILanguage() + "/"
-						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey());
 				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
@@ -1462,7 +1462,7 @@ public class Movie implements Serializable {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_GETTRANSLATIONS_URL
 						+ GeneralSettings.getAPILanguage() + "/"
-						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + imdbID);
 				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
@@ -1766,7 +1766,7 @@ public class Movie implements Serializable {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_BROWSE_URL
 						+ GeneralSettings.getAPILanguage() + "/"
-						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "?"
 						+ options.buildQuery());
 				String jsonString = Utilities.readUrlResponse(call);
@@ -1793,4 +1793,65 @@ public class Movie implements Serializable {
 		}
 		return null;
 	}
+
+	/**
+	 * Adds rating for a Movie. Requires an authenticated session.
+	 * 
+	 * @param movieID
+	 *            The ID of the movie to rate.
+	 * @param rating
+	 *            The rating of the movie. Must be between 0 and 10.
+	 * @param session
+	 *            The session to use. Must be authenticated.
+	 * @return The server response.
+	 * @throws IOException
+	 */
+	public static ServerResponse addRating(int movieID, float rating,
+			Session session) throws IOException {
+		Log.log("Adding rating " + rating + " for movie with id " + movieID,
+				Verbosity.NORMAL);
+		if (rating < 0 || rating > 10) {
+			Log.log("Rating must be in the range 0 to 10.", Verbosity.ERROR);
+			return null;
+		}
+		if (GeneralSettings.getApiKey() != null
+				&& !GeneralSettings.getApiKey().equals("")) {
+			if (session != null && session.getSession() != null
+					&& !session.getSession().equals("")) {
+				try {
+					URL call = new URL(GeneralSettings.BASE_URL
+							+ GeneralSettings.MOVIE_ADD_RATING_URL);
+					String jsonString = Utilities.postToUrl(call, "language",
+							GeneralSettings.getAPILanguage(), "type",
+							GeneralSettings.API_MODE_URL, "api_key",
+							GeneralSettings.getApiKey(), "session_key", session
+									.getSession(), "id", "" + movieID,
+							"rating", "" + rating);
+					try {
+						JSONObject responseJson = new JSONObject(jsonString);
+						if (responseJson.has("code")) {
+							int code = responseJson.getInt("code");
+							return ServerResponse.forID(code);
+						} else {
+							Log.log("Unknown error while rating movie",
+									Verbosity.ERROR);
+							return ServerResponse.UNKNOWN_ERROR;
+						}
+					} catch (JSONException e) {
+						Log.log(e, Verbosity.ERROR);
+						return ServerResponse.UNKNOWN_ERROR;
+					}
+				} catch (IOException e) {
+					Log.log(e, Verbosity.ERROR);
+					throw e;
+				}
+			} else {
+				Log.log("Session was null or empty", Verbosity.ERROR);
+			}
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
+		}
+		return null;
+	}
+
 }

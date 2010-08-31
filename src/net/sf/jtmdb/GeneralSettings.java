@@ -1,6 +1,7 @@
 package net.sf.jtmdb;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 /**
  * This class contains general settings for the library (the API key for
@@ -50,6 +52,10 @@ public class GeneralSettings {
 	 */
 	protected static final String MOVIE_BROWSE_URL = "Movie.browse/";
 	/**
+	 * The url of the API method for rating Movies.
+	 */
+	protected static final String MOVIE_ADD_RATING_URL = "Movie.addRating";
+	/**
 	 * The url of the API method for searching for Person.
 	 */
 	protected static final String PERSON_SEARCH_URL = "Person.search/";
@@ -80,7 +86,7 @@ public class GeneralSettings {
 	/**
 	 * The url of the API mode used.
 	 */
-	protected static final String API_MODE_URL = "json/";
+	protected static final String API_MODE_URL = "json";
 	/**
 	 * The url of the home page of the movie database.
 	 */
@@ -224,11 +230,11 @@ public class GeneralSettings {
 	}
 
 	/**
-	 * This class provides usefull utilities.
+	 * This class provides useful utilities.
 	 * 
 	 * @author Savvas Dalkitsis
 	 */
-	protected static class Utilities {
+	public static class Utilities {
 
 		private Utilities() {
 
@@ -248,14 +254,67 @@ public class GeneralSettings {
 			BufferedReader in = new BufferedReader(new InputStreamReader(yc
 					.getInputStream()));
 			String inputLine;
-			StringBuffer jsonString = new StringBuffer();
+			StringBuffer responce = new StringBuffer();
 			while ((inputLine = in.readLine()) != null) {
-				jsonString.append(inputLine);
+				responce.append(inputLine);
 			}
 			in.close();
-			return jsonString.toString();
+			return responce.toString();
 		}
 
+		/**
+		 * This method posts data to a URL and returns the response.
+		 * 
+		 * @param url
+		 *            The url to post the data to.
+		 * @param post
+		 *            The data to post. The data passed will be handled as
+		 *            string pairs. If the data supplied is of odd amount, the
+		 *            last one will be skipped.
+		 * @return The response.
+		 * @throws IOException
+		 */
+		public static String postToUrl(URL url, String... post)
+				throws IOException {
+			URLConnection conn = url.openConnection();
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			conn.setUseCaches(false);
+			conn.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded");
+
+			int last = post.length - 1;
+			if (post.length % 2 != 0) {
+				last--;
+			}
+			if (post.length == 1) {
+				last = -1;
+			}
+			StringBuffer data = new StringBuffer();
+			for (int i = 0; i <= last; i = i + 2) {
+				data.append(URLEncoder.encode(post[i], "UTF-8")).append("=")
+						.append(URLEncoder.encode(post[i + 1], "UTF-8"))
+						.append("&");
+			}
+			if (data.length() > 0) {
+				data.deleteCharAt(data.length() - 1);
+			}
+
+			DataOutputStream out = new DataOutputStream(conn.getOutputStream());
+			out.writeBytes(data.toString());
+			out.flush();
+			out.close();
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(conn
+					.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+			return response.toString();
+		}
 	}
 
 }

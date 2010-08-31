@@ -151,7 +151,7 @@ public class Genre implements Serializable {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.GENRES_GETLIST_URL
 						+ GeneralSettings.getAPILanguage() + "/"
-						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey());
 				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {

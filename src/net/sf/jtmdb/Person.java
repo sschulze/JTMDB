@@ -521,7 +521,7 @@ public class Person implements Serializable {
 					URL call = new URL(GeneralSettings.BASE_URL
 							+ GeneralSettings.PERSON_SEARCH_URL
 							+ GeneralSettings.getAPILanguage() + "/"
-							+ GeneralSettings.API_MODE_URL
+							+ GeneralSettings.API_MODE_URL + "/"
 							+ GeneralSettings.getApiKey() + "/" + name);
 					String jsonString = Utilities.readUrlResponse(call);
 					List<Person> results = new LinkedList<Person>();
@@ -585,7 +585,7 @@ public class Person implements Serializable {
 					URL call = new URL(GeneralSettings.BASE_URL
 							+ GeneralSettings.PERSON_SEARCH_URL
 							+ GeneralSettings.getAPILanguage() + "/"
-							+ GeneralSettings.API_MODE_URL
+							+ GeneralSettings.API_MODE_URL + "/"
 							+ GeneralSettings.getApiKey() + "/" + name);
 					String jsonString = Utilities.readUrlResponse(call);
 					List<Person> results = new LinkedList<Person>();
@@ -642,7 +642,7 @@ public class Person implements Serializable {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.PERSON_GETINFO_URL
 						+ GeneralSettings.getAPILanguage() + "/"
-						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + ID);
 				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
@@ -685,7 +685,7 @@ public class Person implements Serializable {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.PERSON_GETVERSION_URL
 						+ GeneralSettings.getAPILanguage() + "/"
-						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + ID);
 				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
@@ -752,7 +752,7 @@ public class Person implements Serializable {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.PERSON_GETVERSION_URL
 						+ GeneralSettings.getAPILanguage() + "/"
-						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + listIDs);
 				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
@@ -812,7 +812,7 @@ public class Person implements Serializable {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.PERSON_GETLATEST_URL
 						+ GeneralSettings.getAPILanguage() + "/"
-						+ GeneralSettings.API_MODE_URL
+						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey());
 				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
