@@ -247,11 +247,61 @@ public class Media {
 	}
 
 	/**
+	 * Gets the info for a specific Movie with the provided DVD ID. Returns a
+	 * Movie object with the normal form (see class description {@link Movie}
+	 * and method {@link #isReduced()}). Will return null if a valid API key was
+	 * not supplied to the {@link GeneralSettings} or if the supplied DVD ID did
+	 * not correspond to a movie.
+	 * 
+	 * @param dvdID
+	 *            The ID of the DVD.
+	 * @return A Movie object with the normal form (see class description
+	 *         {@link Movie} and method {@link #isReduced()}). Will return null
+	 *         if a valid API key was not supplied to the
+	 *         {@link GeneralSettings} or if the supplied DVD ID did not
+	 *         correspond to a movie.
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static Movie getInfo(String dvdID) throws IOException, JSONException {
+		Log
+				.log("Getting info for movie with DVD ID " + dvdID,
+						Verbosity.NORMAL);
+		if (GeneralSettings.getApiKey() != null
+				&& !GeneralSettings.getApiKey().equals("")) {
+			try {
+				URL call = new URL(GeneralSettings.BASE_URL
+						+ GeneralSettings.MEDIA_GETINFO_URL
+						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.API_MODE_URL + "/"
+						+ GeneralSettings.getApiKey() + "/" + dvdID);
+				String jsonString = Utilities.readUrlResponse(call);
+				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					JSONArray jsonArray = new JSONArray(jsonString.toString());
+					return new Movie(jsonArray);
+				} else {
+					Log.log("Getting info for Movie with DVD ID " + dvdID
+							+ " returned no results", Verbosity.NORMAL);
+				}
+			} catch (IOException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			} catch (JSONException e) {
+				Log.log(e, Verbosity.ERROR);
+				throw e;
+			}
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
+		}
+		return null;
+	}
+
+	/**
 	 * Gets the info for a specific Movie with the provided hash key and byte
 	 * size of the file. Returns a Movie object with the normal form (see class
 	 * description {@link Movie} and method {@link #isReduced()}). Will return
 	 * null if a valid API key was not supplied to the {@link GeneralSettings}
-	 * or if the supplied hash and byte size did not correspond to a file.
+	 * or if the supplied hash and byte size did not correspond to a movie.
 	 * 
 	 * @param hash
 	 *            The hash of the file.
@@ -261,13 +311,13 @@ public class Media {
 	 *         {@link Movie} and method {@link #isReduced()}). Will return null
 	 *         if a valid API key was not supplied to the
 	 *         {@link GeneralSettings} or if the supplied hash and byte size did
-	 *         not correspond to a file.
+	 *         not correspond to a movie.
 	 * @throws IOException
 	 * @throws JSONException
 	 */
 	public static Movie getInfo(String hash, long byteSize) throws IOException,
 			JSONException {
-		Log.log("Getting info for file with hash " + hash + " and bytesize "
+		Log.log("Getting info for movie with hash " + hash + " and bytesize "
 				+ byteSize, Verbosity.NORMAL);
 		if (GeneralSettings.getApiKey() != null
 				&& !GeneralSettings.getApiKey().equals("")) {
