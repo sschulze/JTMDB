@@ -225,6 +225,28 @@ public class Media {
 	}
 
 	/**
+	 * Gets the info for the movie that is the media file provided. Returns a
+	 * Movie object with the normal form (see class description {@link Movie}
+	 * and method {@link #isReduced()}). Will return null if a valid API key was
+	 * not supplied to the {@link GeneralSettings} or if the supplied media file
+	 * was not correspond to a movie in the database.
+	 * 
+	 * @param mediaFile
+	 *            The file to get the Movie info for.
+	 * @return A Movie object with the normal form (see class description
+	 *         {@link Movie} and method {@link #isReduced()}). Will return null
+	 *         if a valid API key was not supplied to the
+	 *         {@link GeneralSettings} or if the supplied media file was not
+	 *         correspond to a movie in the database.
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static Movie getInfo(File mediaFile) throws IOException,
+			JSONException {
+		return getInfo(generateFileHash(mediaFile), mediaFile.length());
+	}
+
+	/**
 	 * Gets the info for a specific Movie with the provided hash key and byte
 	 * size of the file. Returns a Movie object with the normal form (see class
 	 * description {@link Movie} and method {@link #isReduced()}). Will return
