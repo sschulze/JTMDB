@@ -1650,8 +1650,8 @@ public class Movie implements Serializable {
 					} catch (MalformedURLException e) {
 						Log.log(e, Verbosity.ERROR);
 					}
-					int genreID = jsonObject.getInt("id");
-					getGenres().add(new Genre(genreUrl, genreName, genreID));
+					int genreID = genreObject.getInt("id");
+					genres.add(new Genre(genreUrl, genreName, genreID));
 				}
 				JSONArray studiosArray = jsonObject.getJSONArray("studios");
 				for (int i = 0; i < studiosArray.length(); i++) {
