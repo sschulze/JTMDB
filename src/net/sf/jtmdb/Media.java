@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 
 import net.sf.jtmdb.GeneralSettings.Utilities;
 import net.sf.jtmdb.Log.Verbosity;
@@ -226,22 +228,22 @@ public class Media {
 
 	/**
 	 * Gets the info for the movie that is the media file provided. Returns a
-	 * Movie object with the normal form (see class description {@link Movie}
-	 * and method {@link #isReduced()}). Will return null if a valid API key was
-	 * not supplied to the {@link GeneralSettings} or if the supplied media file
-	 * was not correspond to a movie in the database.
+	 * list of Movie objects with the normal form (see class description
+	 * {@link Movie} and method {@link #isReduced()}). Will return null if a
+	 * valid API key was not supplied to the {@link GeneralSettings} or if the
+	 * supplied media file was not correspond to a movie in the database.
 	 * 
 	 * @param mediaFile
 	 *            The file to get the Movie info for.
-	 * @return A Movie object with the normal form (see class description
-	 *         {@link Movie} and method {@link #isReduced()}). Will return null
-	 *         if a valid API key was not supplied to the
+	 * @return A list of Movie objects with the normal form (see class
+	 *         description {@link Movie} and method {@link #isReduced()}). Will
+	 *         return null if a valid API key was not supplied to the
 	 *         {@link GeneralSettings} or if the supplied media file was not
 	 *         correspond to a movie in the database.
 	 * @throws IOException
 	 * @throws JSONException
 	 */
-	public static Movie getInfo(File mediaFile) throws IOException,
+	public static List<Movie> getInfo(File mediaFile) throws IOException,
 			JSONException {
 		return getInfo(generateFileHash(mediaFile), mediaFile.length());
 	}
@@ -298,25 +300,26 @@ public class Media {
 
 	/**
 	 * Gets the info for a specific Movie with the provided hash key and byte
-	 * size of the file. Returns a Movie object with the normal form (see class
-	 * description {@link Movie} and method {@link #isReduced()}). Will return
-	 * null if a valid API key was not supplied to the {@link GeneralSettings}
-	 * or if the supplied hash and byte size did not correspond to a movie.
+	 * size of the file. Returns a list of Movie objects with the normal form
+	 * (see class description {@link Movie} and method {@link #isReduced()}).
+	 * Will return null if a valid API key was not supplied to the
+	 * {@link GeneralSettings} or if the supplied hash and byte size did not
+	 * correspond to a movie.
 	 * 
 	 * @param hash
 	 *            The hash of the file.
 	 * @param byteSize
 	 *            The byte size of the file.
-	 * @return A Movie object with the normal form (see class description
-	 *         {@link Movie} and method {@link #isReduced()}). Will return null
-	 *         if a valid API key was not supplied to the
+	 * @return A list of Movie objects with the normal form (see class
+	 *         description {@link Movie} and method {@link #isReduced()}). Will
+	 *         return null if a valid API key was not supplied to the
 	 *         {@link GeneralSettings} or if the supplied hash and byte size did
 	 *         not correspond to a movie.
 	 * @throws IOException
 	 * @throws JSONException
 	 */
-	public static Movie getInfo(String hash, long byteSize) throws IOException,
-			JSONException {
+	public static List<Movie> getInfo(String hash, long byteSize)
+			throws IOException, JSONException {
 		Log.log("Getting info for movie with hash " + hash + " and bytesize "
 				+ byteSize, Verbosity.NORMAL);
 		if (GeneralSettings.getApiKey() != null
@@ -331,7 +334,11 @@ public class Media {
 				String jsonString = Utilities.readUrlResponse(call);
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
-					return new Movie(jsonArray);
+					List<Movie> movies = new LinkedList<Movie>();
+					for (int i = 0; i < jsonArray.length(); i++) {
+						movies.add(new Movie(jsonArray.getJSONObject(i)));
+					}
+					return movies;
 				} else {
 					Log.log("Getting info for Movie with hash " + hash
 							+ " and bytesize " + byteSize
