@@ -84,6 +84,14 @@ public class GeneralSettings {
 	 */
 	protected static final String AUTH_SESSION_URL = "Auth.getSession/";
 	/**
+	 * The url of the API method for getting Movie info from media.
+	 */
+	protected static final String MEDIA_GETINFO_URL = "Media.getInfo/";
+	/**
+	 * The url of the API method for adding Media ID for a Movie.
+	 */
+	protected static final String MEDIA_ADD_ID_URL = "Media.addID";
+	/**
 	 * The url of the API mode used.
 	 */
 	protected static final String API_MODE_URL = "json";
