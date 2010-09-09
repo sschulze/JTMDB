@@ -15,7 +15,7 @@ import org.json.JSONObject;
  */
 public class FilmographyInfo implements Serializable {
 
-	private static final long serialVersionUID = -5177289761054959833L;
+	private static final long serialVersionUID = 3195003283645233687L;
 
 	/**
 	 * The name of the Movie.
@@ -49,6 +49,10 @@ public class FilmographyInfo implements Serializable {
 	 * The json string that created this FilmographyInfo object.
 	 */
 	private String jsonOrigin;
+	/**
+	 * The poster of the movie.
+	 */
+	private URL moviePoster;
 
 	/**
 	 * Creates a new FilmographyInfo object.
@@ -71,12 +75,14 @@ public class FilmographyInfo implements Serializable {
 	 *            The json string that created this FilmographyInfo object.
 	 */
 	public FilmographyInfo(String name, String characterName, URL url, int ID,
-			int castID, String job, String department, String jsonOrigin) {
+			int castID, String job, String department, String jsonOrigin,
+			URL moviePoster) {
 		Log.log("Creating FilmographyInfo object with url: "
 				+ ((url == null) ? "NULL" : url.toString())
 				+ ",character name: " + characterName + ", job: " + job
 				+ "id: " + ID + ", castID: " + castID + ", department: "
-				+ department + " and name: " + name, Verbosity.VERBOSE);
+				+ department + ", movie poster: " + moviePoster + " and name: "
+				+ name, Verbosity.VERBOSE);
 		this.jsonOrigin = jsonOrigin;
 		setName(name);
 		setCharacterName(characterName);
@@ -85,6 +91,7 @@ public class FilmographyInfo implements Serializable {
 		setCastID(castID);
 		setJob(job);
 		setDepartment(department);
+		setMoviePoster(moviePoster);
 	}
 
 	@Override
@@ -192,6 +199,25 @@ public class FilmographyInfo implements Serializable {
 	 */
 	public void setUrl(URL url) {
 		this.url = url;
+	}
+
+	/**
+	 * The url of the Movie poster.
+	 * 
+	 * @return The url of the Movie poster.
+	 */
+	public URL getMoviePoster() {
+		return moviePoster;
+	}
+
+	/**
+	 * Sets the url of the Movie poster.
+	 * 
+	 * @param moviePoster
+	 *            The url of the Movie poster.
+	 */
+	public void setMoviePoster(URL moviePoster) {
+		this.moviePoster = moviePoster;
 	}
 
 	/**
