@@ -1556,6 +1556,7 @@ public class Movie implements Serializable {
 				Log.log(e, Verbosity.ERROR);
 				setUrl(null);
 			}
+			images = new MovieImages(getID(), getName());
 			JSONArray postersArray = jsonObject.getJSONArray("posters");
 			for (int i = 0; i < postersArray.length(); i++) {
 				JSONObject image = postersArray.getJSONObject(i).getJSONObject(
@@ -1576,7 +1577,6 @@ public class Movie implements Serializable {
 				} else if (posterSize.equalsIgnoreCase("cover")) {
 					posterSizeEnum = MoviePoster.Size.COVER;
 				}
-				images = new MovieImages(getID(), getName());
 				MoviePoster poster = null;
 				for (MoviePoster p : getImages().posters) {
 					if (p.getID().equals(posterID)) {
