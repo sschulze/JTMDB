@@ -15,7 +15,7 @@ import org.json.JSONObject;
  */
 public class FilmographyInfo implements Serializable {
 
-	private static final long serialVersionUID = 3195003283645233687L;
+	private static final long serialVersionUID = 6201470177126182770L;
 
 	/**
 	 * The name of the Movie.
@@ -53,6 +53,10 @@ public class FilmographyInfo implements Serializable {
 	 * The poster of the movie.
 	 */
 	private URL moviePoster;
+	/**
+	 * Is the movie for adult audiences only.
+	 */
+	private boolean adult;
 
 	/**
 	 * Creates a new FilmographyInfo object.
@@ -73,16 +77,21 @@ public class FilmographyInfo implements Serializable {
 	 *            The department of the job for the Movie.
 	 * @param jsonOrigin
 	 *            The json string that created this FilmographyInfo object.
+	 * @param moviePoster
+	 *            The poster of the movie.
+	 * @param adult
+	 *            Is the movie for adult audiences only.
 	 */
 	public FilmographyInfo(String name, String characterName, URL url, int ID,
 			int castID, String job, String department, String jsonOrigin,
-			URL moviePoster) {
+			URL moviePoster, boolean adult) {
 		Log.log("Creating FilmographyInfo object with url: "
 				+ ((url == null) ? "NULL" : url.toString())
 				+ ",character name: " + characterName + ", job: " + job
 				+ "id: " + ID + ", castID: " + castID + ", department: "
-				+ department + ", movie poster: " + moviePoster + " and name: "
-				+ name, Verbosity.VERBOSE);
+				+ department + ", movie poster: " + moviePoster
+				+ ", adult flag: " + adult + " and name: " + name,
+				Verbosity.VERBOSE);
 		this.jsonOrigin = jsonOrigin;
 		setName(name);
 		setCharacterName(characterName);
@@ -92,6 +101,7 @@ public class FilmographyInfo implements Serializable {
 		setJob(job);
 		setDepartment(department);
 		setMoviePoster(moviePoster);
+		setAdult(adult);
 	}
 
 	@Override
@@ -275,6 +285,25 @@ public class FilmographyInfo implements Serializable {
 	 */
 	public void setJob(String job) {
 		this.job = job;
+	}
+
+	/**
+	 * Returns true if the Movie is adult only.
+	 * 
+	 * @return True if the Movie is adult only.
+	 */
+	public boolean isAdult() {
+		return adult;
+	}
+
+	/**
+	 * Sets whether the Movie is adult only.
+	 * 
+	 * @param adult
+	 *            The adult flag of the Movie.
+	 */
+	public void setAdult(boolean adult) {
+		this.adult = adult;
 	}
 
 	/**

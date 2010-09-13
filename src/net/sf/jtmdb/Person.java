@@ -483,11 +483,12 @@ public class Person implements Serializable {
 					} catch (MalformedURLException e) {
 						Log.log(e, Verbosity.ERROR);
 					}
+					boolean filmAdult = film.getBoolean("adult");
 					getFilmography().add(
 							new FilmographyInfo(filmName, filmCharacter,
 									filmUrl, filmID, castID, filmJob,
 									filmDepartment, film.toString(),
-									moviePoster));
+									moviePoster, filmAdult));
 				}
 			}
 		} catch (JSONException e) {
