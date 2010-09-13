@@ -11,9 +11,33 @@ import java.util.Set;
  */
 public class MovieImages implements Serializable {
 
-	private static final long serialVersionUID = -4389135150276440098L;
-
+	private static final long serialVersionUID = 1087926973625501506L;
+	
 	public Set<MoviePoster> posters = new LinkedHashSet<MoviePoster>();
 	public Set<MovieBackdrop> backdrops = new LinkedHashSet<MovieBackdrop>();
+
+	private String name;
+	private int ID;
+
+	public MovieImages(int ID, String name) {
+		this.ID = ID;
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getID() {
+		return ID;
+	}
+
+	public void setID(int iD) {
+		ID = iD;
+	}
 
 }

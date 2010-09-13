@@ -76,7 +76,7 @@ public class Movie implements Serializable {
 	/**
 	 * The images of the movie.
 	 */
-	private MovieImages images = new MovieImages();
+	private MovieImages images;
 	/**
 	 * Is the movie translated.
 	 */
@@ -1147,8 +1147,10 @@ public class Movie implements Serializable {
 				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
 					JSONObject json = new JSONArray(jsonString.toString())
 							.getJSONObject(0);
+					String movieName = json.getString("name");
+					int movieID = json.getInt("id");
 					JSONArray postersArray = json.getJSONArray("posters");
-					MovieImages images = new MovieImages();
+					MovieImages images = new MovieImages(movieID, movieName);
 					for (int i = 0; i < postersArray.length(); i++) {
 						JSONObject image = postersArray.getJSONObject(i)
 								.getJSONObject("image");
@@ -1574,6 +1576,7 @@ public class Movie implements Serializable {
 				} else if (posterSize.equalsIgnoreCase("cover")) {
 					posterSizeEnum = MoviePoster.Size.COVER;
 				}
+				images = new MovieImages(getID(), getName());
 				MoviePoster poster = null;
 				for (MoviePoster p : getImages().posters) {
 					if (p.getID().equals(posterID)) {
