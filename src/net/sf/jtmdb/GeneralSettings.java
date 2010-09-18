@@ -10,6 +10,7 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Locale;
 
 /**
  * This class contains general settings for the library (the API key for
@@ -120,9 +121,9 @@ public class GeneralSettings {
 	 */
 	private static Log.Verbosity logVerbosity = Log.Verbosity.VERBOSE;
 	/**
-	 * The language of the API.
+	 * The locale of the API.
 	 */
-	private static String APILanguage = "en";
+	private static Locale APILocale = new Locale("en", "US");
 
 	/**
 	 * Returns the stored API key for the library. Used by search methods
@@ -219,22 +220,40 @@ public class GeneralSettings {
 	}
 
 	/**
-	 * Sets the language of the API.
+	 * Sets the locale of the API.
 	 * 
-	 * @param APILanguage
-	 *            The language of the API.
+	 * @param APILocale
+	 *            The locale of the API.
 	 */
-	public static void setAPILanguage(String APILanguage) {
-		GeneralSettings.APILanguage = APILanguage;
+	public static void setAPILocale(Locale APILocale) {
+		GeneralSettings.APILocale = APILocale;
 	}
 
 	/**
-	 * The language of the API. Default is en.
+	 * The locale of the API. Default is en-US.
 	 * 
-	 * @return The language of the API. Default is en.
+	 * @return The locale of the API. Default is en-US.
 	 */
-	public static String getAPILanguage() {
-		return APILanguage;
+	public static Locale getAPILocale() {
+		return APILocale;
+	}
+
+	/**
+	 * The locale string of the API. Default is "en-US".
+	 * 
+	 * @return The locale string of the API. Default is "en-US".
+	 */
+	public static String getAPILocaleFormatted() {
+		StringBuffer formatted = new StringBuffer();
+		if (APILocale.getLanguage() != null
+				&& !APILocale.getLanguage().equals("")) {
+			formatted.append(APILocale.getLanguage());
+		}
+		if (APILocale.getCountry() != null
+				&& !APILocale.getCountry().equals("")) {
+			formatted.append("-").append(APILocale.getCountry());
+		}
+		return formatted.toString();
 	}
 
 	/**

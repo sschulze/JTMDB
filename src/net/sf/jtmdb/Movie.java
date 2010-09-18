@@ -974,7 +974,7 @@ public class Movie implements Serializable {
 				try {
 					URL call = new URL(GeneralSettings.BASE_URL
 							+ GeneralSettings.MOVIE_SEARCH_URL
-							+ GeneralSettings.getAPILanguage() + "/"
+							+ GeneralSettings.getAPILocaleFormatted() + "/"
 							+ GeneralSettings.API_MODE_URL + "/"
 							+ GeneralSettings.getApiKey() + "/" + name);
 					String jsonString = Utilities.readUrlResponse(call);
@@ -1038,7 +1038,7 @@ public class Movie implements Serializable {
 				try {
 					URL call = new URL(GeneralSettings.BASE_URL
 							+ GeneralSettings.MOVIE_SEARCH_URL
-							+ GeneralSettings.getAPILanguage() + "/"
+							+ GeneralSettings.getAPILocaleFormatted() + "/"
 							+ GeneralSettings.API_MODE_URL + "/"
 							+ GeneralSettings.getApiKey() + "/" + name);
 					String jsonString = Utilities.readUrlResponse(call);
@@ -1095,7 +1095,7 @@ public class Movie implements Serializable {
 			try {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_GETINFO_URL
-						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + ID);
 				String jsonString = Utilities.readUrlResponse(call);
@@ -1140,7 +1140,7 @@ public class Movie implements Serializable {
 			try {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_GETIMAGES_URL
-						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + ID);
 				String jsonString = Utilities.readUrlResponse(call);
@@ -1249,7 +1249,7 @@ public class Movie implements Serializable {
 			try {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_GETVERSION_URL
-						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + ID);
 				String jsonString = Utilities.readUrlResponse(call);
@@ -1317,7 +1317,7 @@ public class Movie implements Serializable {
 			try {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_GETVERSION_URL
-						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + listIDs);
 				String jsonString = Utilities.readUrlResponse(call);
@@ -1377,7 +1377,7 @@ public class Movie implements Serializable {
 			try {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_GETLATEST_URL
-						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey());
 				String jsonString = Utilities.readUrlResponse(call);
@@ -1463,7 +1463,7 @@ public class Movie implements Serializable {
 			try {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_GETTRANSLATIONS_URL
-						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + imdbID);
 				String jsonString = Utilities.readUrlResponse(call);
@@ -1768,7 +1768,7 @@ public class Movie implements Serializable {
 			try {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MOVIE_BROWSE_URL
-						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "?"
 						+ options.buildQuery());
@@ -1825,7 +1825,7 @@ public class Movie implements Serializable {
 					URL call = new URL(GeneralSettings.BASE_URL
 							+ GeneralSettings.MOVIE_ADD_RATING_URL);
 					String jsonString = Utilities.postToUrl(call, "language",
-							GeneralSettings.getAPILanguage(), "type",
+							GeneralSettings.getAPILocaleFormatted(), "type",
 							GeneralSettings.API_MODE_URL, "api_key",
 							GeneralSettings.getApiKey(), "session_key", session
 									.getSession(), "id", "" + movieID,

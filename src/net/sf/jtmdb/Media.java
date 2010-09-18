@@ -274,7 +274,7 @@ public class Media {
 			try {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MEDIA_GETINFO_URL
-						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + dvdID);
 				String jsonString = Utilities.readUrlResponse(call);
@@ -327,7 +327,7 @@ public class Media {
 			try {
 				URL call = new URL(GeneralSettings.BASE_URL
 						+ GeneralSettings.MEDIA_GETINFO_URL
-						+ GeneralSettings.getAPILanguage() + "/"
+						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + hash + "/"
 						+ byteSize);
