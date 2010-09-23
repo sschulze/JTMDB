@@ -34,7 +34,7 @@ import org.json.JSONObject;
 public class Person implements Serializable {
 
 	private static final long serialVersionUID = -6402903044946593378L;
-
+	
 	/**
 	 * The name of the person.
 	 */
@@ -484,11 +484,34 @@ public class Person implements Serializable {
 						Log.log(e, Verbosity.ERROR);
 					}
 					boolean filmAdult = film.getBoolean("adult");
+
+					String dateString = film.getString("release");
+					Date releasedDate = null;
+					if (!dateString.equals("")) {
+						String year = dateString.substring(0, dateString
+								.indexOf("-"));
+						dateString = dateString.substring(dateString
+								.indexOf("-") + 1);
+						String month = dateString.substring(0, dateString
+								.indexOf("-"));
+						dateString = dateString.substring(dateString
+								.indexOf("-") + 1);
+						Calendar c = Calendar.getInstance();
+						try {
+							c.set(Calendar.YEAR, Integer.parseInt(year));
+							c.set(Calendar.MONTH, Integer.parseInt(month) - 1);
+							c.set(Calendar.DAY_OF_MONTH, Integer
+									.parseInt(dateString));
+							releasedDate = c.getTime();
+						} catch (NumberFormatException e) {
+							Log.log(e, Verbosity.ERROR);
+						}
+					}
 					getFilmography().add(
 							new FilmographyInfo(filmName, filmCharacter,
 									filmUrl, filmID, castID, filmJob,
 									filmDepartment, film.toString(),
-									moviePoster, filmAdult));
+									moviePoster, filmAdult, releasedDate));
 				}
 			}
 		} catch (JSONException e) {

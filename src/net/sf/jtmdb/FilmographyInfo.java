@@ -2,6 +2,7 @@ package net.sf.jtmdb;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Date;
 
 import net.sf.jtmdb.Log.Verbosity;
 
@@ -15,7 +16,7 @@ import org.json.JSONObject;
  */
 public class FilmographyInfo implements Serializable {
 
-	private static final long serialVersionUID = 6201470177126182770L;
+	private static final long serialVersionUID = -5487789524164209239L;
 
 	/**
 	 * The name of the Movie.
@@ -57,6 +58,10 @@ public class FilmographyInfo implements Serializable {
 	 * Is the movie for adult audiences only.
 	 */
 	private boolean adult;
+	/**
+	 * The release date of the movie.
+	 */
+	private Date releasedDate;
 
 	/**
 	 * Creates a new FilmographyInfo object.
@@ -81,10 +86,12 @@ public class FilmographyInfo implements Serializable {
 	 *            The poster of the movie.
 	 * @param adult
 	 *            Is the movie for adult audiences only.
+	 * @param releasedDate
+	 *            The release date of the movie.
 	 */
 	public FilmographyInfo(String name, String characterName, URL url, int ID,
 			int castID, String job, String department, String jsonOrigin,
-			URL moviePoster, boolean adult) {
+			URL moviePoster, boolean adult, Date releasedDate) {
 		Log.log("Creating FilmographyInfo object with url: "
 				+ ((url == null) ? "NULL" : url.toString())
 				+ ",character name: " + characterName + ", job: " + job
@@ -102,6 +109,7 @@ public class FilmographyInfo implements Serializable {
 		setDepartment(department);
 		setMoviePoster(moviePoster);
 		setAdult(adult);
+		setReleasedDate(releasedDate);
 	}
 
 	@Override
@@ -321,6 +329,25 @@ public class FilmographyInfo implements Serializable {
 	 */
 	public String getDepartment() {
 		return department;
+	}
+
+	/**
+	 * The Movie release Date.
+	 * 
+	 * @return The Movie release Date.
+	 */
+	public Date getReleasedDate() {
+		return releasedDate;
+	}
+
+	/**
+	 * Sets the release date of the Movie.
+	 * 
+	 * @param releasedDate
+	 *            The release date of the Movie.
+	 */
+	public void setReleasedDate(Date releasedDate) {
+		this.releasedDate = releasedDate;
 	}
 
 }

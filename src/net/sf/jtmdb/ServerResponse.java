@@ -1,5 +1,8 @@
 package net.sf.jtmdb;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This enumeration provides the responses from the server when using a POST
  * method.
@@ -11,65 +14,107 @@ public enum ServerResponse {
 	/**
 	 * Success.
 	 */
-	SUCCESS("Success"),
+	SUCCESS("Success", 1),
 	/**
 	 * Invalid service - This service does not exist.
 	 */
-	INVALID_SERVICE("Invalid service - This service does not exist."),
+	INVALID_SERVICE("Invalid service - This service does not exist.", 2),
 	/**
 	 * Authentication Failed - You do not have permissions to access the
 	 * service.
 	 */
 	AUTHENTICATION_FAILED(
-			"Authentication Failed - You do not have permissions to access the service."),
+			"Authentication Failed - You do not have permissions to access the service.",
+			3),
 	/**
 	 * Invalid format - This service doesn't exist in that format.
 	 */
 	INVALID_FORMAT(
-			"Invalid format - This service doesn't exist in that format."),
+			"Invalid format - This service doesn't exist in that format.", 4),
 	/**
 	 * Invalid parameters - Your request is missing a required parameter.
 	 */
 	INVALID_PARAMETERS(
-			"Invalid parameters - Your request is missing a required parameter."),
+			"Invalid parameters - Your request is missing a required parameter.",
+			5),
 	/**
 	 * Invalid pre-requisite id - The pre-requisite id is invalid or not found.
 	 */
 	INVALID_PREREQUISITE_ID(
-			"Invalid pre-requisite id - The pre-requisite id is invalid or not found."),
+			"Invalid pre-requisite id - The pre-requisite id is invalid or not found.",
+			6),
 	/**
 	 * Invalid API key - You must be granted a valid key.
 	 */
-	INVALID_API_KEY("Invalid API key - You must be granted a valid key."),
+	INVALID_API_KEY("Invalid API key - You must be granted a valid key.", 7),
 	/**
 	 * Duplicate entry - The data you tried to submit already exists.
 	 */
 	DUPLICATE_ENTRY(
-			"Duplicate entry - The data you tried to submit already exists."),
+			"Duplicate entry - The data you tried to submit already exists.", 8),
 	/**
 	 * Service Offline - This service is temporarily offline. Try again later.
 	 */
 	SERVER_OFFLINE(
-			"Service Offline - This service is temporarily offline. Try again later."),
+			"Service Offline - This service is temporarily offline. Try again later.",
+			9),
 	/**
 	 * Suspended API key - Access to your account has been suspended, contact
 	 * TMDb.
 	 */
 	SUSPENDED_API_KEY(
-			"Suspended API key - Access to your account has been suspended, contact TMDb."),
+			"Suspended API key - Access to your account has been suspended, contact TMDb.",
+			10),
 	/**
 	 * Internal error - Something went wrong. Contact TMDb.
 	 */
-	INTERNAL_ERROR("Internal error - Something went wrong. Contact TMDb."),
+	INTERNAL_ERROR("Internal error - Something went wrong. Contact TMDb.", 11),
+	/**
+	 * The item/record was updated successfully
+	 */
+	ITEM_RECORD_UPDATED_SUCCESFULLY("The item/record was updated successfully",
+			12),
 	/**
 	 * There was an unidentified error.
 	 */
-	UNKNOWN_ERROR("There was an unidentified error.");
+	UNKNOWN_ERROR("There was an unidentified error.", -1);
+
+	/**
+	 * This will hold the responses mapped to their code.
+	 */
+	private static Map<Integer, ServerResponse> pool;
 
 	/**
 	 * The message of the response.
 	 */
 	private String message;
+	/**
+	 * The code of the response.
+	 */
+	private int code;
+
+	/**
+	 * The code of the response.
+	 * 
+	 * @return The response of the response.
+	 */
+	public int getCode() {
+		return code;
+	}
+
+	/**
+	 * Sets the code of the response.
+	 * 
+	 * @param code
+	 *            The code of the response.
+	 */
+	public void setCode(int code) {
+		this.code = code;
+		if (pool == null) {
+			pool = new HashMap<Integer, ServerResponse>();
+		}
+		pool.put(code, this);
+	}
 
 	/**
 	 * The message of the response.
@@ -90,8 +135,9 @@ public enum ServerResponse {
 		this.message = message;
 	}
 
-	private ServerResponse(String message) {
+	private ServerResponse(String message, int code) {
 		setMessage(message);
+		setCode(code);
 	}
 
 	/**
@@ -101,45 +147,10 @@ public enum ServerResponse {
 	 *            The ID of the response.
 	 * @return The appropriate response for the specified ID.
 	 */
-	protected static ServerResponse forID(int id) {
-		ServerResponse response = null;
-		switch (id) {
-		case 1:
-			response = SUCCESS;
-			break;
-		case 2:
-			response = INVALID_SERVICE;
-			break;
-		case 3:
-			response = AUTHENTICATION_FAILED;
-			break;
-		case 4:
-			response = INVALID_FORMAT;
-			break;
-		case 5:
-			response = INVALID_PARAMETERS;
-			break;
-		case 6:
-			response = INVALID_PREREQUISITE_ID;
-			break;
-		case 7:
-			response = INVALID_API_KEY;
-			break;
-		case 8:
-			response = DUPLICATE_ENTRY;
-			break;
-		case 9:
-			response = SERVER_OFFLINE;
-			break;
-		case 10:
-			response = SUSPENDED_API_KEY;
-			break;
-		case 11:
-			response = INTERNAL_ERROR;
-			break;
-		default:
+	public static ServerResponse forID(int id) {
+		ServerResponse response = pool.get(id);
+		if (response == null) {
 			response = UNKNOWN_ERROR;
-			break;
 		}
 		return response;
 	}
