@@ -257,6 +257,38 @@ public class GeneralSettings {
 	}
 
 	/**
+	 * This method will store the state of the GeneralSettings to the provided
+	 * state object.
+	 * 
+	 * @param state
+	 *            The state object to use in order to store the GeneralSettings
+	 *            state.
+	 */
+	public static void retainState(GeneralSettingsState state) {
+		state.retainAPIKey(getApiKey());
+		state.retainAPILocale(getAPILocale());
+		state.retaingLogVerbosity(getLogVerbosity());
+		state.retainLogEnabled(isLogEnabled());
+		state.retainLogStream(getLogStream());
+	}
+
+	/**
+	 * This method will restore the state of the GeneralSettings from the
+	 * provided state object.
+	 * 
+	 * @param state
+	 *            The state object to use in order to restore the
+	 *            GeneralSettings state.
+	 */
+	public static void restoreState(GeneralSettingsState state) {
+		setApiKey(state.restoreAPIKey());
+		setAPILocale(state.restoreAPILocale());
+		setLogVerbosity(state.restoreLogVerbosity());
+		setLogEnabled(state.restoreLogEnabled());
+		setLogStream(state.restoreLogStream());
+	}
+
+	/**
 	 * This class provides useful utilities.
 	 * 
 	 * @author Savvas Dalkitsis
