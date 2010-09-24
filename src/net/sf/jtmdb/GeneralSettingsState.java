@@ -20,7 +20,7 @@ public interface GeneralSettingsState {
 	 * @param apiKey
 	 *            The API key.
 	 */
-	public void retainAPIKey(String apiKey);
+	public void storeAPIKey(String apiKey);
 
 	/**
 	 * This method stores the log stream.
@@ -28,7 +28,7 @@ public interface GeneralSettingsState {
 	 * @param logStream
 	 *            The log stream.
 	 */
-	public void retainLogStream(PrintStream logStream);
+	public void storeLogStream(PrintStream logStream);
 
 	/**
 	 * This method stores the log enabled flag.
@@ -36,7 +36,7 @@ public interface GeneralSettingsState {
 	 * @param logEnabled
 	 *            The log enabled flag.
 	 */
-	public void retainLogEnabled(boolean logEnabled);
+	public void storeLogEnabled(boolean logEnabled);
 
 	/**
 	 * This method stores the verbosity of the log.
@@ -44,7 +44,7 @@ public interface GeneralSettingsState {
 	 * @param logVerbosity
 	 *            The verbosity of the log.
 	 */
-	public void retaingLogVerbosity(Verbosity logVerbosity);
+	public void storeLogVerbosity(Verbosity logVerbosity);
 
 	/**
 	 * This method stores the locale of the API.
@@ -52,7 +52,7 @@ public interface GeneralSettingsState {
 	 * @param apiLocale
 	 *            The locale of the API.
 	 */
-	public void retainAPILocale(Locale apiLocale);
+	public void storeAPILocale(Locale apiLocale);
 
 	/**
 	 * This method restores the API key.

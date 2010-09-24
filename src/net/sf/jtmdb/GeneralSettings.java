@@ -264,12 +264,12 @@ public class GeneralSettings {
 	 *            The state object to use in order to store the GeneralSettings
 	 *            state.
 	 */
-	public static void retainState(GeneralSettingsState state) {
-		state.retainAPIKey(getApiKey());
-		state.retainAPILocale(getAPILocale());
-		state.retaingLogVerbosity(getLogVerbosity());
-		state.retainLogEnabled(isLogEnabled());
-		state.retainLogStream(getLogStream());
+	public static void storeState(GeneralSettingsState state) {
+		state.storeAPIKey(getApiKey());
+		state.storeAPILocale(getAPILocale());
+		state.storeLogVerbosity(getLogVerbosity());
+		state.storeLogEnabled(isLogEnabled());
+		state.storeLogStream(getLogStream());
 	}
 
 	/**
