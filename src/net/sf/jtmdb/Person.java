@@ -33,8 +33,8 @@ import org.json.JSONObject;
  */
 public class Person implements Serializable {
 
-	private static final long serialVersionUID = -6402903044946593378L;
-	
+	private static final long serialVersionUID = 316786806074114033L;
+
 	/**
 	 * The name of the person.
 	 */
@@ -68,6 +68,14 @@ public class Person implements Serializable {
 	 * Denotes whether the person object is reduced.
 	 */
 	private boolean isReduced;
+	/**
+	 * The date of the last modification.
+	 */
+	private Date lastModifiedAt;
+	/**
+	 * The version of the Person.
+	 */
+	private int version;
 
 	// Only in full profile
 
@@ -377,6 +385,44 @@ public class Person implements Serializable {
 	}
 
 	/**
+	 * The Date of the last modification.
+	 * 
+	 * @return The Date of the last modification.
+	 */
+	public Date getLastModifiedAtDate() {
+		return lastModifiedAt;
+	}
+
+	/**
+	 * Sets the date of the last modification.
+	 * 
+	 * @param lastModifiedAt
+	 *            The date of the last modification.
+	 */
+	public void setLastModifiedAtDate(Date lastModifiedAt) {
+		this.lastModifiedAt = lastModifiedAt;
+	}
+
+	/**
+	 * The version of the Person.
+	 * 
+	 * @return The version of the Person.
+	 */
+	public int getVersion() {
+		return version;
+	}
+
+	/**
+	 * Sets the version of the Person.
+	 * 
+	 * @param version
+	 *            The version of the Person.
+	 */
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
+	/**
 	 * Parses a JSON object wrapped in a JSON array and sets the Person fields.
 	 * 
 	 * @param jsonArray
@@ -435,6 +481,32 @@ public class Person implements Serializable {
 				prof.setImage(ps, url);
 				setProfile(prof);
 			}
+			String lastModified = jsonObject.getString("last_modified_at");
+			if (!lastModified.equals("")) {
+				String[] datePass = lastModified.split("-");
+				String[] secondPass = datePass[2].split(" ");
+				datePass[2] = secondPass[0];
+				String[] hourPass = secondPass[1].split(":");
+				String year = datePass[0];
+				String month = datePass[1];
+				String day = datePass[2];
+				String hour = hourPass[0];
+				String minute = hourPass[1];
+				String second = hourPass[2];
+				Calendar c = Calendar.getInstance();
+				try {
+					c.set(Calendar.YEAR, Integer.parseInt(year));
+					c.set(Calendar.MONTH, Integer.parseInt(month) - 1);
+					c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(day));
+					c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+					c.set(Calendar.MINUTE, Integer.parseInt(minute));
+					c.set(Calendar.SECOND, Integer.parseInt(second));
+				} catch (NumberFormatException e) {
+					Log.log(e, Verbosity.ERROR);
+				}
+				setLastModifiedAtDate(c.getTime());
+			}
+			setVersion(jsonObject.getInt("version"));
 
 			setReduced(true);
 			if (jsonObject.has("biography")) {

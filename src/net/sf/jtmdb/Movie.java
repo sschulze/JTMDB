@@ -35,7 +35,7 @@ import org.json.JSONObject;
  */
 public class Movie implements Serializable {
 
-	private static final long serialVersionUID = -3604171134163230639L;
+	private static final long serialVersionUID = -1620346540555250902L;
 
 	/**
 	 * The name of the movie.
@@ -109,6 +109,10 @@ public class Movie implements Serializable {
 	 * The votes for this Movie.
 	 */
 	private int votes;
+	/**
+	 * The date of the last modification.
+	 */
+	private Date lastModifiedAt;
 
 	/**
 	 * Denotes whether the movie object is reduced.
@@ -438,6 +442,15 @@ public class Movie implements Serializable {
 	}
 
 	/**
+	 * The Date of the last modification.
+	 * 
+	 * @return The Date of the last modification.
+	 */
+	public Date getLastModifiedAtDate() {
+		return lastModifiedAt;
+	}
+
+	/**
 	 * The version of the Movie.
 	 * 
 	 * @return The version of the Movie.
@@ -638,6 +651,16 @@ public class Movie implements Serializable {
 	 */
 	public void setReleasedDate(Date releasedDate) {
 		this.releasedDate = releasedDate;
+	}
+
+	/**
+	 * Sets the date of the last modification.
+	 * 
+	 * @param lastModifiedAt
+	 *            The date of the last modification.
+	 */
+	public void setLastModifiedAtDate(Date lastModifiedAt) {
+		this.lastModifiedAt = lastModifiedAt;
 	}
 
 	/**
@@ -1635,6 +1658,31 @@ public class Movie implements Serializable {
 					Log.log(e, Verbosity.ERROR);
 				}
 				setReleasedDate(c.getTime());
+			}
+			String lastModified = jsonObject.getString("last_modified_at");
+			if (!lastModified.equals("")) {
+				String[] datePass = lastModified.split("-");
+				String[] secondPass = datePass[2].split(" ");
+				datePass[2] = secondPass[0];
+				String[] hourPass = secondPass[1].split(":");
+				String year = datePass[0];
+				String month = datePass[1];
+				String day = datePass[2];
+				String hour = hourPass[0];
+				String minute = hourPass[1];
+				String second = hourPass[2];
+				Calendar c = Calendar.getInstance();
+				try {
+					c.set(Calendar.YEAR, Integer.parseInt(year));
+					c.set(Calendar.MONTH, Integer.parseInt(month) - 1);
+					c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(day));
+					c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+					c.set(Calendar.MINUTE, Integer.parseInt(minute));
+					c.set(Calendar.SECOND, Integer.parseInt(second));
+				} catch (NumberFormatException e) {
+					Log.log(e, Verbosity.ERROR);
+				}
+				setLastModifiedAtDate(c.getTime());
 			}
 			setCertification(jsonObject.getString("certification"));
 			setVersion(jsonObject.getInt("version"));
