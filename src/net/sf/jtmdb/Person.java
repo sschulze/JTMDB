@@ -8,7 +8,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -481,30 +480,15 @@ public class Person implements Serializable {
 				prof.setImage(ps, url);
 				setProfile(prof);
 			}
-			String lastModified = jsonObject.getString("last_modified_at");
-			if (!lastModified.equals("")) {
-				String[] datePass = lastModified.split("-");
-				String[] secondPass = datePass[2].split(" ");
-				datePass[2] = secondPass[0];
-				String[] hourPass = secondPass[1].split(":");
-				String year = datePass[0];
-				String month = datePass[1];
-				String day = datePass[2];
-				String hour = hourPass[0];
-				String minute = hourPass[1];
-				String second = hourPass[2];
-				Calendar c = Calendar.getInstance();
-				try {
-					c.set(Calendar.YEAR, Integer.parseInt(year));
-					c.set(Calendar.MONTH, Integer.parseInt(month) - 1);
-					c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(day));
-					c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
-					c.set(Calendar.MINUTE, Integer.parseInt(minute));
-					c.set(Calendar.SECOND, Integer.parseInt(second));
-				} catch (NumberFormatException e) {
-					Log.log(e, Verbosity.ERROR);
-				}
-				setLastModifiedAtDate(c.getTime());
+			Date lastModified = null;
+			try {
+				lastModified = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+						.parse(jsonObject.getString("last_modified_at"));
+			} catch (ParseException e) {
+				Log.log(e, Verbosity.ERROR);
+			}
+			if (lastModified != null) {
+				setLastModifiedAtDate(lastModified);
 			}
 			setVersion(jsonObject.getInt("version"));
 
@@ -514,21 +498,15 @@ public class Person implements Serializable {
 				setBiography(jsonObject.getString("biography"));
 				setBirthPlace(jsonObject.getString("birthplace"));
 				setKnownMovies(jsonObject.getInt("known_movies"));
-				String date = jsonObject.getString("birthday");
-				if (date != null && !date.equals("")) {
-					String year = date.substring(0, date.indexOf("-"));
-					date = date.substring(date.indexOf("-") + 1);
-					String month = date.substring(0, date.indexOf("-"));
-					date = date.substring(date.indexOf("-") + 1);
-					Calendar c = Calendar.getInstance();
-					try {
-						c.set(Calendar.YEAR, Integer.parseInt(year));
-						c.set(Calendar.MONTH, Integer.parseInt(month) - 1);
-						c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date));
-					} catch (NumberFormatException e) {
-						Log.log(e, Verbosity.ERROR);
-					}
-					setBirthday(c.getTime());
+				Date date = null;
+				try {
+					date = new SimpleDateFormat("yyyy-MM-dd").parse(jsonObject
+							.getString("birthday"));
+				} catch (ParseException e) {
+					Log.log(e, Verbosity.ERROR);
+				}
+				if (date != null) {
+					setBirthday(date);
 				}
 				JSONArray knownAs = jsonObject.getJSONArray("known_as");
 				for (int i = 0; i < knownAs.length(); i++) {
@@ -557,27 +535,12 @@ public class Person implements Serializable {
 					}
 					boolean filmAdult = film.getBoolean("adult");
 
-					String dateString = film.getString("release");
 					Date releasedDate = null;
-					if (!dateString.equals("")) {
-						String year = dateString.substring(0, dateString
-								.indexOf("-"));
-						dateString = dateString.substring(dateString
-								.indexOf("-") + 1);
-						String month = dateString.substring(0, dateString
-								.indexOf("-"));
-						dateString = dateString.substring(dateString
-								.indexOf("-") + 1);
-						Calendar c = Calendar.getInstance();
-						try {
-							c.set(Calendar.YEAR, Integer.parseInt(year));
-							c.set(Calendar.MONTH, Integer.parseInt(month) - 1);
-							c.set(Calendar.DAY_OF_MONTH, Integer
-									.parseInt(dateString));
-							releasedDate = c.getTime();
-						} catch (NumberFormatException e) {
-							Log.log(e, Verbosity.ERROR);
-						}
+					try {
+						releasedDate = new SimpleDateFormat("yyyy-MM-dd")
+								.parse(film.getString("release"));
+					} catch (ParseException e) {
+						Log.log(e, Verbosity.ERROR);
 					}
 					getFilmography().add(
 							new FilmographyInfo(filmName, filmCharacter,
