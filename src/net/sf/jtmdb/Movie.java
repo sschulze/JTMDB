@@ -135,7 +135,7 @@ public class Movie implements Serializable {
 	/**
 	 * The movie revenue. Not present in reduced form.
 	 */
-	private int revenue;
+	private long revenue;
 	/**
 	 * The movie homepage. Not present in reduced form.
 	 */
@@ -496,7 +496,7 @@ public class Movie implements Serializable {
 	 * @return The Movie revenue. Not present in reduced form (see class
 	 *         description {@link Movie} and method {@link #isReduced()}).
 	 */
-	public int getRevenue() {
+	public long getRevenue() {
 		return revenue;
 	}
 
@@ -688,7 +688,7 @@ public class Movie implements Serializable {
 	 * @param revenue
 	 *            The revenue of the Movie.
 	 */
-	public void setRevenue(int revenue) {
+	public void setRevenue(long revenue) {
 		this.revenue = revenue;
 	}
 
@@ -1768,7 +1768,7 @@ public class Movie implements Serializable {
 					Log.log(e, Verbosity.ERROR);
 				}
 				try {
-					setRevenue(jsonObject.getInt("revenue"));
+					setRevenue(jsonObject.getLong("revenue"));
 				} catch (JSONException e) {
 					Log.log(e, Verbosity.ERROR);
 				}
