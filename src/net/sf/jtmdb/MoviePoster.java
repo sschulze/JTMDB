@@ -1,5 +1,6 @@
 package net.sf.jtmdb;
 
+import java.awt.Dimension;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import net.sf.jtmdb.Log.Verbosity;
  */
 public class MoviePoster implements Serializable {
 
-	private static final long serialVersionUID = -929318281343773736L;
+	private static final long serialVersionUID = -484188331871936455L;
 
 	/**
 	 * This enumeration provides different sizes for the posters.
@@ -26,9 +27,9 @@ public class MoviePoster implements Serializable {
 	}
 
 	/**
-	 * The urls for the different sizes of the poster.
+	 * The urls and dimensions info for the different sizes of the poster.
 	 */
-	private Map<Size, URL> urls = new HashMap<Size, URL>();
+	private Map<Size, Pair<Dimension, URL>> info = new HashMap<Size, Pair<Dimension, URL>>();
 
 	/**
 	 * The ID of the backdrop.
@@ -51,15 +52,16 @@ public class MoviePoster implements Serializable {
 	/**
 	 * Constructs a new MoviePoster.
 	 * 
-	 * @param urls
-	 *            The urls of the different sizes of the poster.
+	 * @param info
+	 *            The url and dimension infos of the different sizes of the
+	 *            poster.
 	 * @param ID
 	 *            The ID of the poster.
 	 */
-	public MoviePoster(Map<Size, URL> urls, String ID) {
+	public MoviePoster(Map<Size, Pair<Dimension, URL>> info, String ID) {
 		this(ID);
-		if (urls != null) {
-			this.urls.putAll(urls);
+		if (info != null) {
+			this.info.putAll(info);
 		}
 	}
 
@@ -73,19 +75,33 @@ public class MoviePoster implements Serializable {
 	 *         otherwise null.
 	 */
 	public URL getImage(Size size) {
-		return urls.get(size);
+		return info.get(size).getSecond();
 	}
 
 	/**
-	 * Sets the image Url for the provided size.
+	 * Returns the dimensions of the poster for the specified size if it exists,
+	 * otherwise null.
 	 * 
 	 * @param size
 	 *            The size of the poster.
-	 * @param url
-	 *            The Url of the poster for the specified size.
+	 * @return The dimension of the poster for the specified size if it exists,
+	 *         otherwise null.
 	 */
-	public void setImage(Size size, URL url) {
-		urls.put(size, url);
+	public Dimension getImageDimension(Size size) {
+		return info.get(size).getFirst();
+	}
+
+	/**
+	 * Sets the image Url and dimension for the provided size.
+	 * 
+	 * @param size
+	 *            The size of the poster.
+	 * @param info
+	 *            The Url and dimension info of the poster for the specified
+	 *            size.
+	 */
+	public void setImage(Size size, Pair<Dimension, URL> info) {
+		this.info.put(size, info);
 	}
 
 	/**
@@ -127,6 +143,38 @@ public class MoviePoster implements Serializable {
 		if (url == null)
 			url = getImage(MoviePoster.Size.THUMB);
 		return url;
+	}
+
+	/**
+	 * Returns the dimensions of the smallest available size.
+	 * 
+	 * @return The dimensions of the smallest available size.
+	 */
+	public Dimension getSmallestImageDimension() {
+		Dimension dim = getImageDimension(MoviePoster.Size.THUMB);
+		if (dim == null)
+			dim = getImageDimension(MoviePoster.Size.COVER);
+		if (dim == null)
+			dim = getImageDimension(MoviePoster.Size.MID);
+		if (dim == null)
+			dim = getImageDimension(MoviePoster.Size.ORIGINAL);
+		return dim;
+	}
+
+	/**
+	 * Returns the dimensions of the largest available size.
+	 * 
+	 * @return The dimensions of the largest available size.
+	 */
+	public Dimension getLargestImageDimension() {
+		Dimension dim = getImageDimension(MoviePoster.Size.ORIGINAL);
+		if (dim == null)
+			dim = getImageDimension(MoviePoster.Size.MID);
+		if (dim == null)
+			dim = getImageDimension(MoviePoster.Size.COVER);
+		if (dim == null)
+			dim = getImageDimension(MoviePoster.Size.THUMB);
+		return dim;
 	}
 
 }

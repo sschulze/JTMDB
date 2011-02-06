@@ -1,5 +1,6 @@
 package net.sf.jtmdb;
 
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -458,6 +459,22 @@ public class Person implements Serializable {
 			JSONArray profile = jsonObject.getJSONArray("profile");
 			for (int i = 0; i < profile.length(); i++) {
 				JSONObject p = profile.getJSONObject(i).getJSONObject("image");
+				int profileW = -1;
+				int profileH = -1;
+				try {
+					profileW = p.getInt("width");
+				} catch (JSONException e) {
+					Log.log(e, Verbosity.ERROR);
+				}
+				try {
+					profileH = p.getInt("height");
+				} catch (JSONException e) {
+					Log.log(e, Verbosity.ERROR);
+				}
+				Dimension profileD = null;
+				if (profileW > 0 && profileH > 0) {
+					profileD = new Dimension(profileW, profileH);
+				}
 				String id = p.getString("id");
 				URL url = null;
 				try {
@@ -477,7 +494,7 @@ public class Person implements Serializable {
 				if (prof == null) {
 					prof = new PersonProfile(id);
 				}
-				prof.setImage(ps, url);
+				prof.setImage(ps, new Pair<Dimension, URL>(profileD, url));
 				setProfile(prof);
 			}
 			Date lastModified = null;

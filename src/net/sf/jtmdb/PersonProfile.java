@@ -1,5 +1,6 @@
 package net.sf.jtmdb;
 
+import java.awt.Dimension;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import net.sf.jtmdb.Log.Verbosity;
  */
 public class PersonProfile implements Serializable {
 
-	private static final long serialVersionUID = 2834303760310177549L;
+	private static final long serialVersionUID = -5039194937693346970L;
 
 	/**
 	 * This enumeration provides different sizes for the profile image.
@@ -26,9 +27,9 @@ public class PersonProfile implements Serializable {
 	}
 
 	/**
-	 * The urls for the different sizes of the profile image.
+	 * The urls and dimensions for the different sizes of the profile image.
 	 */
-	private Map<Size, URL> urls = new HashMap<Size, URL>();
+	private Map<Size, Pair<Dimension, URL>> info = new HashMap<Size, Pair<Dimension, URL>>();
 
 	/**
 	 * The ID of the profile image.
@@ -50,15 +51,16 @@ public class PersonProfile implements Serializable {
 	/**
 	 * Constructs a new PersonProfile.
 	 * 
-	 * @param urls
-	 *            The urls of the different sizes of the profile image.
+	 * @param info
+	 *            The urls and dimensions of the different sizes of the profile
+	 *            image.
 	 * @param ID
 	 *            The ID of the profile image.
 	 */
-	public PersonProfile(Map<Size, URL> urls, String ID) {
+	public PersonProfile(Map<Size, Pair<Dimension, URL>> info, String ID) {
 		this(ID);
-		if (urls != null) {
-			this.urls.putAll(urls);
+		if (info != null) {
+			this.info.putAll(info);
 		}
 	}
 
@@ -72,19 +74,33 @@ public class PersonProfile implements Serializable {
 	 *         otherwise null.
 	 */
 	public URL getImage(Size size) {
-		return urls.get(size);
+		return info.get(size).getSecond();
 	}
 
 	/**
-	 * Sets the image Url for the provided size.
+	 * Returns the dimensions of the profile image for the specified size if it
+	 * exists, otherwise null.
 	 * 
 	 * @param size
 	 *            The size of the profile image.
-	 * @param url
-	 *            The Url of the profile image for the specified size.
+	 * @return The dimensions of the profile image for the specified size if it
+	 *         exists, otherwise null.
 	 */
-	public void setImage(Size size, URL url) {
-		urls.put(size, url);
+	public Dimension getImageDimension(Size size) {
+		return info.get(size).getFirst();
+	}
+
+	/**
+	 * Sets the image Url and dimension for the provided size.
+	 * 
+	 * @param size
+	 *            The size of the profile image.
+	 * @param info
+	 *            The Url and dimension of the profile image for the specified
+	 *            size.
+	 */
+	public void setImage(Size size, Pair<Dimension, URL> info) {
+		this.info.put(size, info);
 	}
 
 	/**
@@ -126,6 +142,38 @@ public class PersonProfile implements Serializable {
 			url = getImage(Size.THUMB);
 		}
 		return url;
+	}
+
+	/**
+	 * Returns the dimensions of the smallest available size.
+	 * 
+	 * @return The dimensions of the smallest available size.
+	 */
+	public Dimension getSmallestImageDimension() {
+		Dimension dim = getImageDimension(Size.THUMB);
+		if (dim == null) {
+			dim = getImageDimension(Size.PROFILE);
+		}
+		if (dim == null) {
+			dim = getImageDimension(Size.ORIGINAL);
+		}
+		return dim;
+	}
+
+	/**
+	 * Returns the dimensions of the largest available size.
+	 * 
+	 * @return The dimensions of the largest available size.
+	 */
+	public Dimension getLargestImageDimension() {
+		Dimension dim = getImageDimension(Size.ORIGINAL);
+		if (dim == null) {
+			dim = getImageDimension(Size.PROFILE);
+		}
+		if (dim == null) {
+			dim = getImageDimension(Size.THUMB);
+		}
+		return dim;
 	}
 
 }

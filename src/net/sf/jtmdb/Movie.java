@@ -1,5 +1,6 @@
 package net.sf.jtmdb;
 
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -34,8 +35,7 @@ import org.json.JSONObject;
  */
 public class Movie implements Serializable {
 
-	private static final long serialVersionUID = -1620346540555250902L;
-
+	private static final long serialVersionUID = -6360810410868514356L;
 	/**
 	 * The name of the movie.
 	 */
@@ -1188,6 +1188,22 @@ public class Movie implements Serializable {
 						} catch (MalformedURLException e) {
 							Log.log(e, Verbosity.ERROR);
 						}
+						int posterW = -1;
+						int posterH = -1;
+						try {
+							posterW = image.getInt("width");
+						} catch (JSONException e) {
+							Log.log(e, Verbosity.ERROR);
+						}
+						try {
+							posterH = image.getInt("height");
+						} catch (JSONException e) {
+							Log.log(e, Verbosity.ERROR);
+						}
+						Dimension posterD = null;
+						if (posterW > 0 && posterH > 0) {
+							posterD = new Dimension(posterW, posterH);
+						}
 						String posterID = image.getString("id");
 						String posterSize = image.getString("size");
 						MoviePoster.Size posterSizeEnum = MoviePoster.Size.ORIGINAL;
@@ -1208,7 +1224,8 @@ public class Movie implements Serializable {
 							poster = new MoviePoster(posterID);
 							images.posters.add(poster);
 						}
-						poster.setImage(posterSizeEnum, posterURL);
+						poster.setImage(posterSizeEnum,
+								new Pair<Dimension, URL>(posterD, posterURL));
 					}
 					postersArray = json.getJSONArray("backdrops");
 					for (int i = 0; i < postersArray.length(); i++) {
@@ -1219,6 +1236,22 @@ public class Movie implements Serializable {
 							posterURL = new URL(image.getString("url"));
 						} catch (MalformedURLException e) {
 							Log.log(e, Verbosity.ERROR);
+						}
+						int posterW = -1;
+						int posterH = -1;
+						try {
+							posterW = image.getInt("width");
+						} catch (JSONException e) {
+							Log.log(e, Verbosity.ERROR);
+						}
+						try {
+							posterH = image.getInt("height");
+						} catch (JSONException e) {
+							Log.log(e, Verbosity.ERROR);
+						}
+						Dimension posterD = null;
+						if (posterW > 0 && posterH > 0) {
+							posterD = new Dimension(posterW, posterH);
 						}
 						String posterID = image.getString("id");
 						String posterSize = image.getString("size");
@@ -1238,7 +1271,8 @@ public class Movie implements Serializable {
 							backdrop = new MovieBackdrop(posterID);
 							images.backdrops.add(backdrop);
 						}
-						backdrop.setImage(posterSizeEnum, posterURL);
+						backdrop.setImage(posterSizeEnum,
+								new Pair<Dimension, URL>(posterD, posterURL));
 					}
 					return images;
 				} else {
@@ -1599,6 +1633,22 @@ public class Movie implements Serializable {
 				} catch (MalformedURLException e) {
 					Log.log(e, Verbosity.ERROR);
 				}
+				int posterW = -1;
+				int posterH = -1;
+				try {
+					posterW = image.getInt("width");
+				} catch (JSONException e) {
+					Log.log(e, Verbosity.ERROR);
+				}
+				try {
+					posterH = image.getInt("height");
+				} catch (JSONException e) {
+					Log.log(e, Verbosity.ERROR);
+				}
+				Dimension posterD = null;
+				if (posterW > 0 && posterH > 0) {
+					posterD = new Dimension(posterW, posterH);
+				}
 				String posterID = image.getString("id");
 				String posterSize = image.getString("size");
 				MoviePoster.Size posterSizeEnum = MoviePoster.Size.ORIGINAL;
@@ -1619,7 +1669,8 @@ public class Movie implements Serializable {
 					poster = new MoviePoster(posterID);
 					getImages().posters.add(poster);
 				}
-				poster.setImage(posterSizeEnum, posterURL);
+				poster.setImage(posterSizeEnum, new Pair<Dimension, URL>(
+						posterD, posterURL));
 			}
 			postersArray = jsonObject.getJSONArray("backdrops");
 			for (int i = 0; i < postersArray.length(); i++) {
@@ -1630,6 +1681,22 @@ public class Movie implements Serializable {
 					posterURL = new URL(image.getString("url"));
 				} catch (MalformedURLException e) {
 					Log.log(e, Verbosity.ERROR);
+				}
+				int posterW = -1;
+				int posterH = -1;
+				try {
+					posterW = image.getInt("width");
+				} catch (JSONException e) {
+					Log.log(e, Verbosity.ERROR);
+				}
+				try {
+					posterH = image.getInt("height");
+				} catch (JSONException e) {
+					Log.log(e, Verbosity.ERROR);
+				}
+				Dimension posterD = null;
+				if (posterW > 0 && posterH > 0) {
+					posterD = new Dimension(posterW, posterH);
 				}
 				String posterID = image.getString("id");
 				String posterSize = image.getString("size");
@@ -1649,7 +1716,8 @@ public class Movie implements Serializable {
 					backdrop = new MovieBackdrop(posterID);
 					getImages().backdrops.add(backdrop);
 				}
-				backdrop.setImage(posterSizeEnum, posterURL);
+				backdrop.setImage(posterSizeEnum, new Pair<Dimension, URL>(
+						posterD, posterURL));
 			}
 			setImdbID(jsonObject.getString("imdb_id"));
 			Date released = null;

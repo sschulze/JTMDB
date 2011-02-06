@@ -1,5 +1,6 @@
 package net.sf.jtmdb;
 
+import java.awt.Dimension;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
@@ -26,9 +27,9 @@ public class MovieBackdrop implements Serializable {
 	}
 
 	/**
-	 * The urls for the different sizes of the backdrop.
+	 * The urls and dimensions for the different sizes of the backdrop.
 	 */
-	private Map<Size, URL> urls = new HashMap<Size, URL>();
+	private Map<Size, Pair<Dimension, URL>> info = new HashMap<Size, Pair<Dimension, URL>>();
 
 	/**
 	 * The ID of the backdrop.
@@ -50,15 +51,16 @@ public class MovieBackdrop implements Serializable {
 	/**
 	 * Constructs a new MovieBackdrop.
 	 * 
-	 * @param urls
-	 *            The urls of the different sizes of the backdrop.
+	 * @param info
+	 *            The urls and dimensions of the different sizes of the
+	 *            backdrop.
 	 * @param ID
 	 *            The ID of the backdrop.
 	 */
-	public MovieBackdrop(Map<Size, URL> urls, String ID) {
+	public MovieBackdrop(Map<Size, Pair<Dimension, URL>> info, String ID) {
 		this(ID);
-		if (urls != null) {
-			this.urls.putAll(urls);
+		if (info != null) {
+			this.info.putAll(info);
 		}
 	}
 
@@ -72,19 +74,32 @@ public class MovieBackdrop implements Serializable {
 	 *         otherwise null.
 	 */
 	public URL getImage(Size size) {
-		return urls.get(size);
+		return info.get(size).getSecond();
 	}
 
 	/**
-	 * Sets the image Url for the provided size.
+	 * Returns the dimensions of the backdrop for the specified size if it
+	 * exists, otherwise null.
 	 * 
 	 * @param size
 	 *            The size of the backdrop.
-	 * @param url
-	 *            The Url of the backdrop for the specified size.
+	 * @return The dimensions of the backdrop for the specified size if it
+	 *         exists, otherwise null.
 	 */
-	public void setImage(Size size, URL url) {
-		urls.put(size, url);
+	public Dimension getImageDimension(Size size) {
+		return info.get(size).getFirst();
+	}
+
+	/**
+	 * Sets the image Url and dimension for the provided size.
+	 * 
+	 * @param size
+	 *            The size of the backdrop.
+	 * @param info
+	 *            The Url and dimension of the backdrop for the specified size.
+	 */
+	public void setImage(Size size, Pair<Dimension, URL> info) {
+		this.info.put(size, info);
 	}
 
 	/**
@@ -122,6 +137,34 @@ public class MovieBackdrop implements Serializable {
 		if (url == null)
 			url = getImage(MovieBackdrop.Size.THUMB);
 		return url;
+	}
+
+	/**
+	 * Returns the dimensions of the smallest available size.
+	 * 
+	 * @return The dimensions of the smallest available size.
+	 */
+	public Dimension getSmallestImageDimension() {
+		Dimension dim = getImageDimension(MovieBackdrop.Size.THUMB);
+		if (dim == null)
+			dim = getImageDimension(MovieBackdrop.Size.POSTER);
+		if (dim == null)
+			dim = getImageDimension(MovieBackdrop.Size.ORIGINAL);
+		return dim;
+	}
+
+	/**
+	 * Returns the dimensions of the largest available size.
+	 * 
+	 * @return The dimensions of the largest available size.
+	 */
+	public Dimension getLargestImageDimension() {
+		Dimension dim = getImageDimension(MovieBackdrop.Size.ORIGINAL);
+		if (dim == null)
+			dim = getImageDimension(MovieBackdrop.Size.POSTER);
+		if (dim == null)
+			dim = getImageDimension(MovieBackdrop.Size.THUMB);
+		return dim;
 	}
 
 }
