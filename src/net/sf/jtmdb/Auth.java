@@ -107,8 +107,9 @@ public class Auth {
 						+ GeneralSettings.AUTH_TOKEN_URL
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey());
-				String jsonString = Utilities.readUrlResponse(call);
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				String jsonString = Utilities.readUrlResponse(call).trim();
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONObject jsonObject = new JSONObject(jsonString
 							.toString());
 					String token = jsonObject.getString("token");

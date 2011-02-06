@@ -153,8 +153,9 @@ public class Genre implements Serializable {
 						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey());
-				String jsonString = Utilities.readUrlResponse(call);
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				String jsonString = Utilities.readUrlResponse(call).trim();
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					JSONObject jsonObject = jsonArray.getJSONObject(0);
 					boolean translated = jsonObject.getBoolean("translated");

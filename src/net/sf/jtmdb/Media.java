@@ -277,8 +277,9 @@ public class Media {
 						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + dvdID);
-				String jsonString = Utilities.readUrlResponse(call);
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				String jsonString = Utilities.readUrlResponse(call).trim();
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					return new Movie(jsonArray);
 				} else {
@@ -331,8 +332,9 @@ public class Media {
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + hash + "/"
 						+ byteSize);
-				String jsonString = Utilities.readUrlResponse(call);
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				String jsonString = Utilities.readUrlResponse(call).trim();
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					List<Movie> movies = new LinkedList<Movie>();
 					for (int i = 0; i < jsonArray.length(); i++) {

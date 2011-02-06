@@ -626,9 +626,11 @@ public class Person implements Serializable {
 							+ GeneralSettings.getAPILocaleFormatted() + "/"
 							+ GeneralSettings.API_MODE_URL + "/"
 							+ GeneralSettings.getApiKey() + "/" + name);
-					String jsonString = Utilities.readUrlResponse(call);
+					String jsonString = Utilities.readUrlResponse(call).trim();
 					List<Person> results = new LinkedList<Person>();
-					if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					if ((jsonString.startsWith("[") || jsonString
+							.startsWith("{"))
+							&& !jsonString.equals("[\"Nothing found.\"]")) {
 						JSONArray jsonArray = new JSONArray(jsonString
 								.toString());
 						for (int i = 0; i < jsonArray.length(); i++) {
@@ -690,9 +692,11 @@ public class Person implements Serializable {
 							+ GeneralSettings.getAPILocaleFormatted() + "/"
 							+ GeneralSettings.API_MODE_URL + "/"
 							+ GeneralSettings.getApiKey() + "/" + name);
-					String jsonString = Utilities.readUrlResponse(call);
+					String jsonString = Utilities.readUrlResponse(call).trim();
 					List<Person> results = new LinkedList<Person>();
-					if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					if ((jsonString.startsWith("[") || jsonString
+							.startsWith("{"))
+							&& !jsonString.equals("[\"Nothing found.\"]")) {
 						JSONArray jsonArray = new JSONArray(jsonString
 								.toString());
 						for (int i = 0; i < jsonArray.length(); i++) {
@@ -747,8 +751,9 @@ public class Person implements Serializable {
 						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + ID);
-				String jsonString = Utilities.readUrlResponse(call);
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				String jsonString = Utilities.readUrlResponse(call).trim();
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					return new Person(jsonArray);
 				} else {
@@ -790,8 +795,9 @@ public class Person implements Serializable {
 						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + ID);
-				String jsonString = Utilities.readUrlResponse(call);
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				String jsonString = Utilities.readUrlResponse(call).trim();
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					JSONObject jsonObject = jsonArray.getJSONObject(0);
 					String name = jsonObject.getString("name");
@@ -857,8 +863,9 @@ public class Person implements Serializable {
 						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + listIDs);
-				String jsonString = Utilities.readUrlResponse(call);
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				String jsonString = Utilities.readUrlResponse(call).trim();
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					List<PersonVersionInfo> versionInfo = new LinkedList<PersonVersionInfo>();
 					for (int i = 0; i < jsonArray.length(); i++) {
@@ -917,8 +924,9 @@ public class Person implements Serializable {
 						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey());
-				String jsonString = Utilities.readUrlResponse(call);
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				String jsonString = Utilities.readUrlResponse(call).trim();
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					JSONObject jsonObject = jsonArray.getJSONObject(0);
 					String name = jsonObject.getString("name");

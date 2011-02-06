@@ -1000,9 +1000,11 @@ public class Movie implements Serializable {
 							+ GeneralSettings.getAPILocaleFormatted() + "/"
 							+ GeneralSettings.API_MODE_URL + "/"
 							+ GeneralSettings.getApiKey() + "/" + name);
-					String jsonString = Utilities.readUrlResponse(call);
+					String jsonString = Utilities.readUrlResponse(call).trim();
 					List<Movie> results = new LinkedList<Movie>();
-					if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					if ((jsonString.startsWith("[") || jsonString
+							.startsWith("{"))
+							&& !jsonString.equals("[\"Nothing found.\"]")) {
 						JSONArray jsonArray = new JSONArray(jsonString
 								.toString());
 						for (int i = 0; i < jsonArray.length(); i++) {
@@ -1064,9 +1066,11 @@ public class Movie implements Serializable {
 							+ GeneralSettings.getAPILocaleFormatted() + "/"
 							+ GeneralSettings.API_MODE_URL + "/"
 							+ GeneralSettings.getApiKey() + "/" + name);
-					String jsonString = Utilities.readUrlResponse(call);
+					String jsonString = Utilities.readUrlResponse(call).trim();
 					List<Movie> results = new LinkedList<Movie>();
-					if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+					if ((jsonString.startsWith("[") || jsonString
+							.startsWith("{"))
+							&& !jsonString.equals("[\"Nothing found.\"]")) {
 						JSONArray jsonArray = new JSONArray(jsonString
 								.toString());
 						for (int i = 0; i < jsonArray.length(); i++) {
@@ -1121,8 +1125,9 @@ public class Movie implements Serializable {
 						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + ID);
-				String jsonString = Utilities.readUrlResponse(call);
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				String jsonString = Utilities.readUrlResponse(call).trim();
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					return new Movie(jsonArray);
 				} else {
@@ -1166,8 +1171,9 @@ public class Movie implements Serializable {
 						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + ID);
-				String jsonString = Utilities.readUrlResponse(call);
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				String jsonString = Utilities.readUrlResponse(call).trim();
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONObject json = new JSONArray(jsonString.toString())
 							.getJSONObject(0);
 					String movieName = json.getString("name");
@@ -1275,8 +1281,9 @@ public class Movie implements Serializable {
 						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + ID);
-				String jsonString = Utilities.readUrlResponse(call);
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				String jsonString = Utilities.readUrlResponse(call).trim();
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					JSONObject jsonObject = jsonArray.getJSONObject(0);
 					String name = jsonObject.getString("name");
@@ -1343,9 +1350,10 @@ public class Movie implements Serializable {
 						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + listIDs);
-				String jsonString = Utilities.readUrlResponse(call);
+				String jsonString = Utilities.readUrlResponse(call).trim();
 				List<MovieVersionInfo> versionInfo = new LinkedList<MovieVersionInfo>();
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					for (int i = 0; i < jsonArray.length(); i++) {
 						JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -1403,8 +1411,9 @@ public class Movie implements Serializable {
 						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey());
-				String jsonString = Utilities.readUrlResponse(call);
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				String jsonString = Utilities.readUrlResponse(call).trim();
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					JSONObject jsonObject = jsonArray.getJSONObject(0);
 					String name = jsonObject.getString("name");
@@ -1489,8 +1498,9 @@ public class Movie implements Serializable {
 						+ GeneralSettings.getAPILocaleFormatted() + "/"
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "/" + imdbID);
-				String jsonString = Utilities.readUrlResponse(call);
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				String jsonString = Utilities.readUrlResponse(call).trim();
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					JSONObject jsonObject = jsonArray.getJSONObject(0);
 					String name = jsonObject.getString("name");
@@ -1820,9 +1830,10 @@ public class Movie implements Serializable {
 						+ GeneralSettings.API_MODE_URL + "/"
 						+ GeneralSettings.getApiKey() + "?"
 						+ options.buildQuery());
-				String jsonString = Utilities.readUrlResponse(call);
+				String jsonString = Utilities.readUrlResponse(call).trim();
 				List<Movie> results = new LinkedList<Movie>();
-				if (!jsonString.toString().equals("[\"Nothing found.\"]")) {
+				if ((jsonString.startsWith("[") || jsonString.startsWith("{"))
+						&& !jsonString.equals("[\"Nothing found.\"]")) {
 					JSONArray jsonArray = new JSONArray(jsonString.toString());
 					for (int i = 0; i < jsonArray.length(); i++) {
 						results.add(new Movie(jsonArray.getJSONObject(i)));
