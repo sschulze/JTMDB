@@ -15,7 +15,7 @@ import net.sf.jtmdb.Log.Verbosity;
  */
 public class MovieBackdrop implements Serializable {
 
-	private static final long serialVersionUID = 8742803628070811496L;
+	private static final long serialVersionUID = 3111805995892191441L;
 
 	/**
 	 * This enumeration provides different sizes for the backdrops.
@@ -23,7 +23,7 @@ public class MovieBackdrop implements Serializable {
 	 * @author Savvas Dalkitsis
 	 */
 	public enum Size {
-		THUMB, POSTER, ORIGINAL
+		THUMB, POSTER, W1280, ORIGINAL
 	}
 
 	/**
@@ -121,6 +121,8 @@ public class MovieBackdrop implements Serializable {
 		if (url == null)
 			url = getImage(MovieBackdrop.Size.POSTER);
 		if (url == null)
+			url = getImage(MovieBackdrop.Size.W1280);
+		if (url == null)
 			url = getImage(MovieBackdrop.Size.ORIGINAL);
 		return url;
 	}
@@ -132,6 +134,8 @@ public class MovieBackdrop implements Serializable {
 	 */
 	public URL getLargestImage() {
 		URL url = getImage(MovieBackdrop.Size.ORIGINAL);
+		if (url == null)
+			url = getImage(MovieBackdrop.Size.W1280);
 		if (url == null)
 			url = getImage(MovieBackdrop.Size.POSTER);
 		if (url == null)
@@ -149,6 +153,8 @@ public class MovieBackdrop implements Serializable {
 		if (dim == null)
 			dim = getImageDimension(MovieBackdrop.Size.POSTER);
 		if (dim == null)
+			dim = getImageDimension(MovieBackdrop.Size.W1280);
+		if (dim == null)
 			dim = getImageDimension(MovieBackdrop.Size.ORIGINAL);
 		return dim;
 	}
@@ -160,6 +166,8 @@ public class MovieBackdrop implements Serializable {
 	 */
 	public Dimension getLargestImageDimension() {
 		Dimension dim = getImageDimension(MovieBackdrop.Size.ORIGINAL);
+		if (dim == null)
+			dim = getImageDimension(MovieBackdrop.Size.W1280);
 		if (dim == null)
 			dim = getImageDimension(MovieBackdrop.Size.POSTER);
 		if (dim == null)

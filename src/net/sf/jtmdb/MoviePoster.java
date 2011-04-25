@@ -23,7 +23,7 @@ public class MoviePoster implements Serializable {
 	 * @author Savvas Dalkitsis
 	 */
 	public enum Size {
-		THUMB, COVER, MID, ORIGINAL
+		THUMB, W342, COVER, W154, MID, ORIGINAL
 	}
 
 	/**
@@ -121,7 +121,11 @@ public class MoviePoster implements Serializable {
 	public URL getSmallestImage() {
 		URL url = getImage(MoviePoster.Size.THUMB);
 		if (url == null)
+			url = getImage(MoviePoster.Size.W154);
+		if (url == null)
 			url = getImage(MoviePoster.Size.COVER);
+		if (url == null)
+			url = getImage(MoviePoster.Size.W342);
 		if (url == null)
 			url = getImage(MoviePoster.Size.MID);
 		if (url == null)
@@ -139,7 +143,11 @@ public class MoviePoster implements Serializable {
 		if (url == null)
 			url = getImage(MoviePoster.Size.MID);
 		if (url == null)
+			url = getImage(MoviePoster.Size.W342);
+		if (url == null)
 			url = getImage(MoviePoster.Size.COVER);
+		if (url == null)
+			url = getImage(MoviePoster.Size.W154);
 		if (url == null)
 			url = getImage(MoviePoster.Size.THUMB);
 		return url;
@@ -153,7 +161,11 @@ public class MoviePoster implements Serializable {
 	public Dimension getSmallestImageDimension() {
 		Dimension dim = getImageDimension(MoviePoster.Size.THUMB);
 		if (dim == null)
+			dim = getImageDimension(MoviePoster.Size.W154);
+		if (dim == null)
 			dim = getImageDimension(MoviePoster.Size.COVER);
+		if (dim == null)
+			dim = getImageDimension(MoviePoster.Size.W342);
 		if (dim == null)
 			dim = getImageDimension(MoviePoster.Size.MID);
 		if (dim == null)
@@ -171,7 +183,11 @@ public class MoviePoster implements Serializable {
 		if (dim == null)
 			dim = getImageDimension(MoviePoster.Size.MID);
 		if (dim == null)
+			dim = getImageDimension(MoviePoster.Size.W342);
+		if (dim == null)
 			dim = getImageDimension(MoviePoster.Size.COVER);
+		if (dim == null)
+			dim = getImageDimension(MoviePoster.Size.W154);
 		if (dim == null)
 			dim = getImageDimension(MoviePoster.Size.THUMB);
 		return dim;

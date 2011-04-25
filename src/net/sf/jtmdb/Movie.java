@@ -1658,6 +1658,10 @@ public class Movie implements Serializable {
 					posterSizeEnum = MoviePoster.Size.MID;
 				} else if (posterSize.equalsIgnoreCase("cover")) {
 					posterSizeEnum = MoviePoster.Size.COVER;
+				} else if (posterSize.equalsIgnoreCase("w342")) {
+					posterSizeEnum = MoviePoster.Size.W342;
+				} else if (posterSize.equalsIgnoreCase("w154")) {
+					posterSizeEnum = MoviePoster.Size.W154;
 				}
 				MoviePoster poster = null;
 				for (MoviePoster p : getImages().posters) {
@@ -1705,6 +1709,8 @@ public class Movie implements Serializable {
 					posterSizeEnum = MovieBackdrop.Size.THUMB;
 				} else if (posterSize.equalsIgnoreCase("poster")) {
 					posterSizeEnum = MovieBackdrop.Size.POSTER;
+				} else if (posterSize.equalsIgnoreCase("w1280")) {
+					posterSizeEnum = MovieBackdrop.Size.W1280;
 				}
 				MovieBackdrop backdrop = null;
 				for (MovieBackdrop p : getImages().backdrops) {
