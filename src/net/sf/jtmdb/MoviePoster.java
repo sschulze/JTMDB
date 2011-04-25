@@ -1,6 +1,5 @@
 package net.sf.jtmdb;
 
-import java.awt.Dimension;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
