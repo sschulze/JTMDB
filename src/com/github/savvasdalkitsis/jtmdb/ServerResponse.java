@@ -1,4 +1,4 @@
-package net.sf.jtmdb;
+package com.github.savvasdalkitsis.jtmdb;
 
 import java.util.HashMap;
 import java.util.Map;

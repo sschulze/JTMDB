@@ -1,13 +1,14 @@
-package net.sf.jtmdb;
+package com.github.savvasdalkitsis.jtmdb;
 
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
 
-import net.sf.jtmdb.Log.Verbosity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.github.savvasdalkitsis.jtmdb.Log.Verbosity;
 
 /**
  * This class represents an entry in the filmography list of a Person.

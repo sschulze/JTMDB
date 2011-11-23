@@ -1,9 +1,10 @@
-package net.sf.jtmdb;
+package com.github.savvasdalkitsis.jtmdb;
 
 import java.io.PrintStream;
 import java.util.Locale;
 
-import net.sf.jtmdb.Log.Verbosity;
+import com.github.savvasdalkitsis.jtmdb.Log.Verbosity;
+
 
 /**
  * This interface provides a mechanism with which the state of GeneralSettings

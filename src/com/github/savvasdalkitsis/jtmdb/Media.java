@@ -1,4 +1,4 @@
-package net.sf.jtmdb;
+package com.github.savvasdalkitsis.jtmdb;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -8,12 +8,13 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.sf.jtmdb.GeneralSettings.Utilities;
-import net.sf.jtmdb.Log.Verbosity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.github.savvasdalkitsis.jtmdb.GeneralSettings.Utilities;
+import com.github.savvasdalkitsis.jtmdb.Log.Verbosity;
 
 /**
  * This class provides methods that links movie information with media formats

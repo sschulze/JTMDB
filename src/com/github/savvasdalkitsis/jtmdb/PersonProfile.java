@@ -1,11 +1,12 @@
-package net.sf.jtmdb;
+package com.github.savvasdalkitsis.jtmdb;
 
 import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.jtmdb.Log.Verbosity;
+import com.github.savvasdalkitsis.jtmdb.Log.Verbosity;
+
 
 /**
  * This class represents a Person profile picture.

@@ -1,4 +1,4 @@
-package net.sf.jtmdb;
+package com.github.savvasdalkitsis.jtmdb;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -16,12 +16,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.jtmdb.GeneralSettings.Utilities;
-import net.sf.jtmdb.Log.Verbosity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.github.savvasdalkitsis.jtmdb.GeneralSettings.Utilities;
+import com.github.savvasdalkitsis.jtmdb.Log.Verbosity;
 
 /**
  * This is the class that represents a Movie. It also provides static methods

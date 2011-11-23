@@ -1,4 +1,4 @@
-package net.sf.jtmdb;
+package com.github.savvasdalkitsis.jtmdb;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -7,7 +7,8 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import net.sf.jtmdb.Log.Verbosity;
+import com.github.savvasdalkitsis.jtmdb.Log.Verbosity;
+
 
 /**
  * This class contains the options used in the Movie.browse method.

@@ -1,4 +1,4 @@
-package net.sf.jtmdb;
+package com.github.savvasdalkitsis.jtmdb;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -14,12 +14,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.jtmdb.GeneralSettings.Utilities;
-import net.sf.jtmdb.Log.Verbosity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.github.savvasdalkitsis.jtmdb.GeneralSettings.Utilities;
+import com.github.savvasdalkitsis.jtmdb.Log.Verbosity;
 
 /**
  * This is the class that represents a Person. It also provides static methods

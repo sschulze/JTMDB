@@ -1,14 +1,15 @@
-package net.sf.jtmdb;
+package com.github.savvasdalkitsis.jtmdb;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import net.sf.jtmdb.GeneralSettings.Utilities;
-import net.sf.jtmdb.Log.Verbosity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.github.savvasdalkitsis.jtmdb.GeneralSettings.Utilities;
+import com.github.savvasdalkitsis.jtmdb.Log.Verbosity;
 
 /**
  * Class that handles authorization with tmdb. The authentication procedure is
