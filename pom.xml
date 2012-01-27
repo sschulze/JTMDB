@@ -11,4 +11,35 @@
 			<version>20090211</version>
 		</dependency>
 	</dependencies>
+	<properties>
+    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  	</properties>
+	<build>
+		<plugins>
+	      <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-compiler-plugin</artifactId>
+	        <version>2.3.2</version>
+	        <configuration>
+	          <source>1.6</source>
+	          <target>1.6</target>
+	        </configuration>
+	      </plugin>
+	    </plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>includeSources</id>
+			<build>
+				<resources>
+					<resource>
+						<directory>${basedir}/src/main/resources</directory>
+		 			</resource>
+		 			<resource>
+		    			<directory>${basedir}/src/main/java</directory>
+					</resource>
+				</resources>			
+			</build>
+		</profile>
+	</profiles>
 </project>
