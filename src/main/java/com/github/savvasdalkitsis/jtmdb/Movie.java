@@ -1097,6 +1097,56 @@ public class Movie implements Serializable {
 		return null;
 	}
 
+	public static List<Movie> imdbLookup(String imdbId) throws IOException,
+			JSONException {
+		Log.log("Performing a Movie search by IMDB-ID \"" + imdbId + "\"",
+				Verbosity.NORMAL);
+		try {
+			imdbId = URLEncoder.encode(imdbId, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			imdbId = imdbId.replaceAll(" ", "%20");
+		}
+		if (GeneralSettings.getApiKey() != null
+				&& !GeneralSettings.getApiKey().equals("")) {
+			if (imdbId != null && !imdbId.equals("")) {
+				try {
+					URL call = new URL(GeneralSettings.BASE_URL
+							+ GeneralSettings.IMDB_LOOKUP_URL
+							+ GeneralSettings.getAPILocaleFormatted() + "/"
+							+ GeneralSettings.API_MODE_URL + "/"
+							+ GeneralSettings.getApiKey() + "/" + imdbId);
+					String jsonString = Utilities.readUrlResponse(call).trim();
+					List<Movie> results = new LinkedList<Movie>();
+					if ((jsonString.startsWith("[") || jsonString
+							.startsWith("{"))
+							&& !jsonString.equals("[\"Nothing found.\"]")) {
+						JSONArray jsonArray = new JSONArray(jsonString
+								.toString());
+						for (int i = 0; i < jsonArray.length(); i++) {
+							results.add(new Movie(jsonArray.getJSONObject(i)));
+						}
+					} else {
+						Log.log("Search for \"" + imdbId
+								+ "\" returned no results", Verbosity.NORMAL);
+					}
+					return results;
+				} catch (IOException e) {
+					Log.log(e, Verbosity.ERROR);
+					throw e;
+				} catch (JSONException e) {
+					Log.log(e, Verbosity.ERROR);
+					throw e;
+				}
+			} else {
+				Log.log("Cannot search for a null or empty string",
+						Verbosity.ERROR);
+			}
+		} else {
+			Log.log("Error with the API key", Verbosity.ERROR);
+		}
+		return null;
+		}
+	
 	/**
 	 * Gets the info for a specific Movie (by ID). Returns a Movie object with
 	 * the normal form (see class description {@link Movie} and method

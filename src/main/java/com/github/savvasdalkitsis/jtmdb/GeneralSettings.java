@@ -92,6 +92,11 @@ public class GeneralSettings {
 	 * The url of the API method for adding Media ID for a Movie.
 	 */
 	protected static final String MEDIA_ADD_ID_URL = "Media.addID";
+	
+	/**
+	 * The url of the API method to query the DB by the IMDB-ID.
+	 */
+	public static final String IMDB_LOOKUP_URL = "Movie.imdbLookup/";
 	/**
 	 * The url of the API mode used.
 	 */
