@@ -316,7 +316,7 @@ public class GeneralSettings {
 		public static String readUrlResponse(URL url) throws IOException {
 			URLConnection yc = url.openConnection();
 			BufferedReader in = new BufferedReader(new InputStreamReader(yc
-					.getInputStream()));
+					.getInputStream(),"UTF-8"));
 			String inputLine;
 			StringBuffer responce = new StringBuffer();
 			while ((inputLine = in.readLine()) != null) {
